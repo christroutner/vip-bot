@@ -1,35 +1,32 @@
 {
-  "name": "koa-api-boilerplate",
-  "version": "3.0.0",
-  "description": "Koa2 boilerplate covering essentials for REST API and auth.",
+  "name": "vip-bot",
+  "version": "1.0.0",
+  "description": "A Telegram bot for a VIP room using SLP tokens",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "export KOA_ENV=test && npm run prep-test && nyc --reporter=text mocha --exit --timeout 15000 test/unit/",
+    "test": "export BOT_ENV=test && npm run prep-test && nyc --reporter=text mocha --exit --timeout 15000 test/unit/",
     "lint": "standard --env mocha --fix",
     "docs": "./node_modules/.bin/apidoc -i src/ -o docs",
-    "coverage": "export KOA_ENV=test && npm run prep-test && nyc report --reporter=text-lcov | coveralls",
-    "coverage:report": "export KOA_ENV=test && npm run prep-test && nyc --reporter=html mocha --exit --timeout 15000 test/unit/",
+    "coverage": "export BOT_ENV=test && npm run prep-test && nyc report --reporter=text-lcov | coveralls",
+    "coverage:report": "export BOT_ENV=test && npm run prep-test && nyc --reporter=html mocha --exit --timeout 15000 test/unit/",
     "prep-test": "node util/users/delete-all-test-users.js"
   },
   "keywords": [
-    "koa-api-boilerplate",
-    "api",
-    "koa",
-    "koa2",
-    "boilerplate",
-    "es6",
-    "mongoose",
-    "passportjs",
-    "apidoc"
+    "telegram",
+    "bot",
+    "Bitcoin Cash",
+    "BCH",
+    "SLP",
+    "tokens"
   ],
   "author": "Chris Troutner <chris.troutner@gmail.com>",
   "license": "MIT",
   "apidoc": {
-    "title": "koa-api-boilerplate",
+    "title": "vip-bot",
     "url": "localhost:5000"
   },
-  "repository": "christroutner/koa-api-boilerplate",
+  "repository": "christroutner/vip-bot",
   "dependencies": {
     "apidoc": "^0.23.0",
     "axios": "^0.19.2",
