@@ -12,6 +12,8 @@ const cors = require('kcors')
 
 // Local libraries
 const config = require('../config') // this first.
+const TGBot = require('./tg-bot')
+const tgBot = new TGBot()
 
 const AdminLib = require('../src/lib/admin')
 const adminLib = new AdminLib()
@@ -69,6 +71,9 @@ async function startServer () {
   // Create the system admin user.
   const success = await adminLib.createSystemUser()
   if (success) console.log('System admin user created.')
+
+  const msg = tgBot.hello()
+  console.log(msg)
 
   return app
 }
