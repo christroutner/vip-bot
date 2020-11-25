@@ -5,3 +5,5 @@ If you don't prove to the bot that you own the tokens by signing a message, then
 
 ## License
 MIT
+
+test
