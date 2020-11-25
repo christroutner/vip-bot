@@ -1,0 +1,3 @@
+/*
+  This library contains methods for working with the BCHN and BCHA blockchains.
+*/
