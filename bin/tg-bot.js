@@ -6,6 +6,9 @@
 // Public npm libraries
 const TelegramBot = require('node-telegram-bot-api')
 
+// Local libraries
+const TGUser = require('../src/models/tg-user')
+
 let _this
 const token = process.env.TELEGRAMTOKEN
 const chatId = process.env.CHATID
@@ -13,6 +16,7 @@ const chatId = process.env.CHATID
 class TGBot {
   constructor (config) {
     this.name = 'world'
+    this.TGUser = TGUser
 
     // Created instance of TelegramBot
     this.bot = new TelegramBot(token, {
@@ -37,9 +41,36 @@ class TGBot {
 
   async processMsg (msg) {
     try {
-      console.log(msg)
+      // console.log(msg)
 
-      await _this.bot.deleteMessage(chatId, msg.message_id)
+      // Query the tgUser model from the data.
+      const tgUser = await _this.TGUser.findOne({ tgId: msg.from.id }).exec()
+      // console.log('result:', tgUser)
+
+      // Create a new model if it doesn't already exist.
+      if (!tgUser) {
+        const newUserData = {
+          username: msg.from.username,
+          tgId: msg.from.id
+        }
+
+        // Create a new telegram user model in the DB.
+        const newTgUser = new _this.TGUser(newUserData)
+        await newTgUser.save()
+
+        // Delete their message.
+        await _this.bot.deleteMessage(chatId, msg.message_id)
+
+        // TODO: Send greeting message.
+
+        // Exit function.
+        return
+      }
+
+      // Delete the users message if they haven't verified.
+      if (!tgUser.hasVerified) {
+        await _this.bot.deleteMessage(chatId, msg.message_id)
+      }
     } catch (err) {
       console.error(err)
     }
