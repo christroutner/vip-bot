@@ -72,7 +72,7 @@ async function startServer () {
   const success = await adminLib.createSystemUser()
   if (success) console.log('System admin user created.')
 
-  const msg = tgBot.hello()
+  const msg = tgBot.start()
   console.log(msg)
 
   return app
