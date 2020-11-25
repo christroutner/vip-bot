@@ -24,6 +24,7 @@ class TGBot {
     })
 
     this.bot.on('message', this.processMsg)
+    this.bot.onText(/\/verify/, this.verifyUser)
 
     setInterval(function () {
       const now = new Date()
@@ -39,9 +40,24 @@ class TGBot {
     return `hello ${displayName}`
   }
 
+  async verifyUser (msg) {
+    try {
+      console.log('verifyUser: ', msg)
+
+      const now = new Date()
+
+      _this.bot.sendMessage(
+        chatId,
+        `You used the /verify command at ${now.toLocaleString()}`
+      )
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   async processMsg (msg) {
     try {
-      // console.log(msg)
+      console.log('processMsg: ', msg)
 
       // Query the tgUser model from the data.
       const tgUser = await _this.TGUser.findOne({ tgId: msg.from.id }).exec()
