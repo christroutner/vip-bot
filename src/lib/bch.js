@@ -4,10 +4,13 @@
 
 // Public npm libraries
 const BCHJS = require('@psf/bch-js')
+const BchMessage = require('bch-message-lib')
 
 class Bch {
   constructor (config) {
+    // Encapsulate dependencies
     this.bchjs = new BCHJS()
+    this.bchMsg = new BchMessage({ bchjs: this.bchjs })
   }
 
   // Verify that the signed message 'verify' was signed by a specific BCH address.
@@ -25,6 +28,19 @@ class Bch {
       return isValid
     } catch (err) {
       console.error('Error in bch.js/verifyMsg()')
+      throw err
+    }
+  }
+
+  // Calculate and return the merit associated with an SLP address.
+  async getMerit (slpAddr) {
+    try {
+      // Get the aggregated merit of the address.
+      const merit = await this.bchMsg.merit.agMerit(slpAddr)
+
+      return merit
+    } catch (err) {
+      console.error('Error in bch.js/getMerit()')
       throw err
     }
   }
