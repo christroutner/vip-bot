@@ -18,12 +18,12 @@ const chatId = process.env.CHATID
 
 class Bot {
   constructor (config) {
-    if (!token) {
+    if (!token && process.env.BOT_ENV !== 'test') {
       throw new Error(
         'Bot Telegram token must be passed as TELEGRAMTOKEN environment variable.'
       )
     }
-    if (!chatId) {
+    if (!chatId && process.env.BOT_ENV !== 'test') {
       throw new Error(
         'Telegram chat room ID must be passed as CHATID environment variable.'
       )
