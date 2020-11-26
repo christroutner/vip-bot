@@ -7,6 +7,7 @@ const TelegramBot = require('node-telegram-bot-api')
 
 // Local libraries
 const TGUser = require('../models/tg-user')
+const BCH = require('./bch')
 
 let _this // Global variable for 'this' reference to the class instance.
 const token = process.env.TELEGRAMTOKEN
@@ -27,6 +28,7 @@ class Bot {
 
     // Encapulate external dependencies.
     this.TGUser = TGUser
+    this.bch = new BCH()
 
     // Created instance of TelegramBot
     this.bot = new TelegramBot(token, {
@@ -51,12 +53,52 @@ class Bot {
     try {
       console.log('verifyUser: ', msg)
 
-      const now = new Date()
+      // const now = new Date()
 
-      _this.bot.sendMessage(
-        chatId,
-        `You used the /verify command at ${now.toLocaleString()}`
-      )
+      // _this.bot.sendMessage(
+      //   chatId,
+      //   `You used the /verify command at ${now.toLocaleString()}`
+      // )
+
+      const msgParts = msg.text.toString().split(' ')
+      // console.log(`msgParts: ${JSON.stringify(msgParts, null, 2)}`)
+
+      let returnMsg = `@${
+        msg.from.username
+      } your address could not be verified.`
+
+      if (msgParts.length === 3) {
+        const verifyObj = {
+          bchAddr: msgParts[1],
+          signedMsg: msgParts[2]
+        }
+
+        const isValidSig = _this.bch.verifyMsg(verifyObj)
+        console.log(`Signature is valid: ${isValidSig}`)
+
+        // If the signature is valid, update the user model.
+        if (isValidSig) {
+          const tgUser = await _this.TGUser.findOne({
+            tgId: msg.from.id
+          }).exec()
+
+          if (!tgUser) { throw new Error('Verified user could not be found in database.') }
+
+          tgUser.bchAddr = msgParts[1]
+          tgUser.slpAddr = _this.bch.bchjs.SLP.Address.toSLPAddress(
+            tgUser.bchAddr
+          )
+          tgUser.hasVerified = true
+
+          await tgUser.save()
+
+          returnMsg = `@${
+            msg.from.username
+          } you have been successfully verified! You may now speak in the VIP room.`
+        }
+
+        _this.bot.sendMessage(chatId, returnMsg)
+      }
     } catch (err) {
       console.error(err)
     }
