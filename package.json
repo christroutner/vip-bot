@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "export BOT_ENV=test && npm run prep-test && nyc --reporter=text mocha --exit --timeout 15000 test/unit/",
+    "test:integration": "mocha --exit --timeout 15000 test/integration/",
     "lint": "standard --env mocha --fix",
     "docs": "./node_modules/.bin/apidoc -i src/ -o docs",
     "coverage": "export BOT_ENV=test && npm run prep-test && nyc report --reporter=text-lcov | coveralls",
