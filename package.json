@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "export BOT_ENV=test && npm run prep-test && nyc --reporter=text mocha --exit --timeout 15000 test/unit/",
-    "test:integration": "mocha --exit --timeout 15000 test/integration/",
+    "test:integration": "export BOT_ENV=test && mocha --exit --timeout 15000 test/integration/",
     "lint": "standard --env mocha --fix",
     "docs": "./node_modules/.bin/apidoc -i src/ -o docs",
     "coverage": "export BOT_ENV=test && npm run prep-test && nyc report --reporter=text-lcov | coveralls",
@@ -64,6 +64,7 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-standard": "^4.0.0",
     "husky": "^4.2.5",
+    "lodash.clonedeep": "^4.5.0",
     "mocha": "^7.0.1",
     "nyc": "^15.0.0",
     "semantic-release": "^17.2.3",
