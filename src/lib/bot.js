@@ -11,7 +11,7 @@ const BCH = require('./bch')
 const wlogger = require('./wlogger')
 
 // Constants
-const PSF_THRESHOLD = 10
+const PSF_THRESHOLD = 30000
 
 let _this // Global variable for 'this' reference to the class instance.
 
@@ -292,9 +292,20 @@ Available commands:
     // a chance to read it. This will prevent bot spam.
     if (msg.chat.type === 'supergroup') {
       setTimeout(async function () {
-        // _this.bot.deleteMessage(_this.chatId, msg.message_id)
-        await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
-        await _this.bot.deleteMessage(botMsg.chat.id, botMsg.message_id)
+        try {
+          // _this.bot.deleteMessage(_this.chatId, msg.message_id)
+          await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
+          await _this.bot.deleteMessage(botMsg.chat.id, botMsg.message_id)
+        } catch (err) {
+          wlogger.error(
+            `Error in deleteBotSpam().\nmsg: ${JSON.stringify(
+              msg,
+              null,
+              2
+            )}\nbotMsg: ${JSON.stringify(botMsg, null, 2)}\nError: `,
+            err
+          )
+        }
       }, 30000) // 30 seconds.
     }
   }
