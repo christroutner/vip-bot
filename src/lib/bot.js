@@ -41,6 +41,8 @@ class Bot {
       )
     }
 
+    console.log(`this.token: ${this.token}, this.chatId: ${this.chatId}`)
+
     // Encapulate external dependencies.
     this.TGUser = TGUser
     this.bch = new BCH()
@@ -53,6 +55,8 @@ class Bot {
     // Bot event hooks.
     this.bot.on('message', this.processMsg)
     this.bot.onText(/\/verify/, this.verifyUser)
+    this.bot.onText(/\/help/, this.help)
+    this.bot.onText(/\/merit/, this.getMerit)
 
     // Used for debugging.
     // setInterval(function () {
@@ -70,6 +74,7 @@ class Bot {
   async processMsg (msg) {
     try {
       wlogger.debug('processMsg: ', msg)
+      console.log('processMsg: ', msg)
 
       // Query the tgUser model from the data.
       const tgUser = await _this.TGUser.findOne({ tgId: msg.from.id })
@@ -104,7 +109,10 @@ class Bot {
       return 3 // Used for testing.
     } catch (err) {
       const now = new Date()
-      wlogger.error(`Error in bot.js/processMsg() at ${now.toLocaleString()}: `, err)
+      wlogger.error(
+        `Error in bot.js/processMsg() at ${now.toLocaleString()}: `,
+        err
+      )
     }
   }
 
@@ -190,12 +198,103 @@ class Bot {
         }
       }
 
-      await _this.bot.sendMessage(_this.chatId, returnMsg)
+      const botMsg = await _this.bot.sendMessage(_this.chatId, returnMsg)
+
+      // If this command is issued in the group, delete it after the user has had
+      // a chance to read it. This will prevent bot spam.
+      if (msg.chat.type === 'supergroup') {
+        setTimeout(async function () {
+          // _this.bot.deleteMessage(_this.chatId, msg.message_id)
+          await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
+          await _this.bot.deleteMessage(botMsg.chat.id, botMsg.message_id)
+        }, 30000)
+      }
 
       return retVal
     } catch (err) {
       const now = new Date()
-      wlogger.error(`Error in bot.js/verifyUser() at ${now.toLocaleString()}: `, err)
+      wlogger.error(
+        `Error in bot.js/verifyUser() at ${now.toLocaleString()}: `,
+        err
+      )
+    }
+  }
+
+  // Display help message to the user.
+  async help (msg) {
+    const outMsg = `
+The bot manages the VIP room for the PSF. Only users who have verified they own PSF tokens with the required Merit are allowed to speak in the VIP room.
+
+To verify your merit, follow these steps:
+
+1) Go to https://message.fullstack.cash and create a wallet.
+
+2) Use the 'Sign Message' area of the app to sign a the word 'verify'
+
+3) Use the /verify command to verify your wallet address, like this:
+  /verify <your BCH address> <The signed message>
+
+4) Purchase PSF tokens at https://PSFoundation.cash or earn them by completing programming tasks. Send these tokens to your wallet address.
+
+Merit = token quantity X token age (in days)
+
+If you purchase fewer tokens, it will take more time to aquire the required merit. If you purchase more, it takes less time.
+
+If you need help, ask for guidence on @permissionless_software
+
+Available commands:
+  /help
+  /verify <BCH address> <signed message>
+  /merit @username
+`
+
+    const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
+    // console.log(`botMsg: ${JSON.stringify(botMsg, null, 2)}`)
+
+    // If this command is issued in the group, delete it after the user has had
+    // a chance to read it. This will prevent bot spam.
+    if (msg.chat.type === 'supergroup') {
+      setTimeout(async function () {
+        // _this.bot.deleteMessage(_this.chatId, msg.message_id)
+        await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
+        await _this.bot.deleteMessage(botMsg.chat.id, botMsg.message_id)
+      }, 30000)
+    }
+  }
+
+  // Query the merit on another user (or yourself)
+  async getMerit (msg) {
+    try {
+      console.log(`getMerit message: ${JSON.stringify(msg, null, 2)}`)
+
+      // Convert the message into an array of parts.
+      const msgParts = msg.text.toString().split(' ')
+
+      const username = msgParts[1].substring(1)
+      console.log(`username: ${username}`)
+
+      const tgUser = await _this.TGUser.findOne({ username })
+
+      let botMsg
+      if (!tgUser) {
+        botMsg = await _this.bot.sendMessage(msg.chat.id, 'User not found.')
+      } else {
+        const merit = tgUser.merit
+        botMsg = await _this.bot.sendMessage(msg.chat.id, `User ${username} has a merit score of ${merit}`)
+      }
+
+      // If this command is issued in the group, delete it after the user has had
+      // a chance to read it. This will prevent bot spam.
+      if (msg.chat.type === 'supergroup') {
+        setTimeout(async function () {
+          // _this.bot.deleteMessage(_this.chatId, msg.message_id)
+          await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
+          await _this.bot.deleteMessage(botMsg.chat.id, botMsg.message_id)
+        }, 30000)
+      }
+    } catch (err) {
+      console.error(err)
+      wlogger.error('Error in bot.js/getMerit(): ', err)
     }
   }
 }
