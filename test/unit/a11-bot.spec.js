@@ -151,7 +151,7 @@ describe('#bot.js', () => {
       sandbox.stub(uut.bch, 'verifyMsg').resolves(true)
       sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockUnverifiedUser)
       // Force merit to be below threshold
-      sandbox.stub(uut.bch, 'getMerit').resolves(1000)
+      sandbox.stub(uut.bch, 'getMerit').resolves(35000)
 
       const result = await uut.verifyUser(mockData.validVerifyMsg)
 
