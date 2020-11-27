@@ -41,7 +41,7 @@ class Bot {
       )
     }
 
-    console.log(`this.token: ${this.token}, this.chatId: ${this.chatId}`)
+    // console.log(`this.token: ${this.token}, this.chatId: ${this.chatId}`)
 
     // Encapulate external dependencies.
     this.TGUser = TGUser
@@ -74,7 +74,7 @@ class Bot {
   async processMsg (msg) {
     try {
       wlogger.debug('processMsg: ', msg)
-      console.log('processMsg: ', msg)
+      // console.log('processMsg: ', msg)
 
       // Query the tgUser model from the data.
       const tgUser = await _this.TGUser.findOne({ tgId: msg.from.id })
@@ -200,15 +200,8 @@ class Bot {
 
       const botMsg = await _this.bot.sendMessage(_this.chatId, returnMsg)
 
-      // If this command is issued in the group, delete it after the user has had
-      // a chance to read it. This will prevent bot spam.
-      if (msg.chat.type === 'supergroup') {
-        setTimeout(async function () {
-          // _this.bot.deleteMessage(_this.chatId, msg.message_id)
-          await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
-          await _this.bot.deleteMessage(botMsg.chat.id, botMsg.message_id)
-        }, 30000)
-      }
+      // Delete bot spam after some time.
+      _this.deleteBotSpam(msg, botMsg)
 
       return retVal
     } catch (err) {
@@ -251,27 +244,22 @@ Available commands:
     const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
     // console.log(`botMsg: ${JSON.stringify(botMsg, null, 2)}`)
 
-    // If this command is issued in the group, delete it after the user has had
-    // a chance to read it. This will prevent bot spam.
-    if (msg.chat.type === 'supergroup') {
-      setTimeout(async function () {
-        // _this.bot.deleteMessage(_this.chatId, msg.message_id)
-        await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
-        await _this.bot.deleteMessage(botMsg.chat.id, botMsg.message_id)
-      }, 30000)
-    }
+    // Delete bot spam after some time.
+    _this.deleteBotSpam(msg, botMsg)
   }
 
   // Query the merit on another user (or yourself)
   async getMerit (msg) {
     try {
-      console.log(`getMerit message: ${JSON.stringify(msg, null, 2)}`)
+      // console.log(`getMerit message: ${JSON.stringify(msg, null, 2)}`)
+
+      let retVal = 0 // default return value
 
       // Convert the message into an array of parts.
       const msgParts = msg.text.toString().split(' ')
 
       const username = msgParts[1].substring(1)
-      console.log(`username: ${username}`)
+      // console.log(`username: ${username}`)
 
       const tgUser = await _this.TGUser.findOne({ username })
 
@@ -279,22 +267,35 @@ Available commands:
       if (!tgUser) {
         botMsg = await _this.bot.sendMessage(msg.chat.id, 'User not found.')
       } else {
+        retVal = 1
         const merit = tgUser.merit
-        botMsg = await _this.bot.sendMessage(msg.chat.id, `User ${username} has a merit score of ${merit}`)
+        botMsg = await _this.bot.sendMessage(
+          msg.chat.id,
+          `User ${username} has a merit score of ${merit}`
+        )
       }
 
-      // If this command is issued in the group, delete it after the user has had
-      // a chance to read it. This will prevent bot spam.
-      if (msg.chat.type === 'supergroup') {
-        setTimeout(async function () {
-          // _this.bot.deleteMessage(_this.chatId, msg.message_id)
-          await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
-          await _this.bot.deleteMessage(botMsg.chat.id, botMsg.message_id)
-        }, 30000)
-      }
+      // Delete bot spam after some time.
+      _this.deleteBotSpam(msg, botMsg)
+
+      return retVal
     } catch (err) {
-      console.error(err)
+      // console.error(err)
       wlogger.error('Error in bot.js/getMerit(): ', err)
+    }
+  }
+
+  // This function will delete the bot messages after a short time window. This
+  // prevents bot spam in the channel.
+  deleteBotSpam (msg, botMsg) {
+    // If this command is issued in the group, delete it after the user has had
+    // a chance to read it. This will prevent bot spam.
+    if (msg.chat.type === 'supergroup') {
+      setTimeout(async function () {
+        // _this.bot.deleteMessage(_this.chatId, msg.message_id)
+        await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
+        await _this.bot.deleteMessage(botMsg.chat.id, botMsg.message_id)
+      }, 30000) // 30 seconds.
     }
   }
 }
