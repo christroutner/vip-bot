@@ -11,7 +11,7 @@ const BCH = require('./bch')
 const wlogger = require('./wlogger')
 
 // Constants
-const PSF_THRESHOLD = 10
+const PSF_THRESHOLD = 30000
 
 let _this // Global variable for 'this' reference to the class instance.
 
