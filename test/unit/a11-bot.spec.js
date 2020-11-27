@@ -169,4 +169,79 @@ describe('#bot.js', () => {
       assert.equal(result, undefined)
     })
   })
+
+  describe('#help', () => {
+    it('should return message when triggered', async () => {
+      // Mock calls to the bot.
+      sandbox.stub(uut.bot, 'sendMessage').resolves()
+
+      const result = await uut.help(mockData.mockHelpCmd)
+      // console.log('result: ', result)
+
+      assert.equal(result, undefined)
+    })
+  })
+
+  describe('#getmerit', () => {
+    it('should return 0 when user is not found', async () => {
+      // Mock calls to the bot.
+      sandbox.stub(uut.bot, 'sendMessage').resolves()
+
+      // Force 'user not found'
+      sandbox.stub(uut.TGUser, 'findOne').resolves(null)
+
+      const result = await uut.getMerit(mockData.getMeritUserNotFound)
+      // console.log('result: ', result)
+
+      assert.equal(result, 0)
+    })
+
+    it('should return 0 for invalid arguments', async () => {
+      // Mock calls to the bot.
+      sandbox.stub(uut.bot, 'sendMessage').resolves()
+
+      // Force 'user not found'
+      sandbox.stub(uut.TGUser, 'findOne').resolves(null)
+
+      const result = await uut.getMerit(mockData.getMeritInvalidArgs)
+      // console.log('result: ', result)
+
+      assert.equal(result, 0)
+    })
+
+    it('should return 1 for unverified user', async () => {
+      // Mock calls to the bot.
+      sandbox.stub(uut.bot, 'sendMessage').resolves()
+
+      // Force unverified user.
+      sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockUnverifiedUser)
+
+      const result = await uut.getMerit(mockData.mockGetMeritMsg)
+      // console.log('result: ', result)
+
+      assert.equal(result, 1)
+    })
+
+    it('should return 1 for verified user', async () => {
+      // Mock calls to the bot.
+      sandbox.stub(uut.bot, 'sendMessage').resolves()
+
+      // Force verified user
+      sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockVerifiedUser)
+
+      const result = await uut.getMerit(mockData.mockGetMeritMsg)
+      // console.log('result: ', result)
+
+      assert.equal(result, 1)
+    })
+
+    it('should catch and report errors', async () => {
+      // Force an error
+      sandbox.stub(uut.TGUser, 'findOne').rejects(new Error('test error'))
+
+      const result = await uut.getMerit(mockData.mockGetMeritMsg)
+
+      assert.equal(result, undefined)
+    })
+  })
 })
