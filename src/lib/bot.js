@@ -11,7 +11,7 @@ const BCH = require('./bch')
 const wlogger = require('./wlogger')
 
 // Constants
-const PSF_THRESHOLD = 15000
+const PSF_THRESHOLD = 30000
 
 let _this // Global variable for 'this' reference to the class instance.
 
@@ -106,6 +106,43 @@ class Bot {
         return 2 // Used for testing.
       }
 
+      // If more than 24 hours has passed since the user's merit was verified,
+      // reverify it.
+      const TWENTY_FOUR_HOURS = 60000 * 60 * 24
+      // const TWENTY_FOUR_HOURS = 1
+      const now = new Date()
+      const nowNum = now.getTime()
+      const lastVerifiedDate = new Date(tgUser.lastVerified)
+      const timeDiff = nowNum - lastVerifiedDate.getTime()
+      if (timeDiff > TWENTY_FOUR_HOURS) {
+        // Update the merit.
+        tgUser.merit = await _this.bch.getMerit(tgUser.slpAddr)
+
+        // Merit meets the threshold.
+        if (tgUser.merit >= PSF_THRESHOLD) {
+          // Mark the database model as having been verified.
+          tgUser.hasVerified = true
+          tgUser.lastVerified = now.toISOString()
+        } else {
+          // Mark the database model as being unverified.
+          tgUser.hasVerified = false
+
+          const returnMsg = `@${
+            msg.from.username
+          } you no longer have enough merit to speak in the room. Your merit is only ${
+            tgUser.merit
+          }. Use the /verify command once your address has accrued enough merit.`
+
+          const botMsg = await _this.bot.sendMessage(_this.chatId, returnMsg)
+
+          // Delete bot spam after some time.
+          _this.deleteBotSpam(msg, botMsg)
+        }
+
+        // Save the user to the database.
+        await tgUser.save()
+      }
+
       return 3 // Used for testing.
     } catch (err) {
       const now = new Date()
@@ -177,12 +214,12 @@ class Bot {
           )
           tgUser.merit = await _this.bch.getMerit(tgUser.slpAddr)
 
+          tgUser.lastVerified = now.toISOString()
+
           // Merit meets the threshold.
           if (tgUser.merit >= PSF_THRESHOLD) {
             // Mark the database model as having been verified.
             tgUser.hasVerified = true
-
-            tgUser.lastVerified = now.toISOString()
 
             returnMsg = `@${
               msg.from.username
@@ -190,6 +227,10 @@ class Bot {
             retVal = 2
           } else {
             // Merit does not meet the threshold.
+
+            // Mark the database model as being unverified.
+            tgUser.hasVerified = false
+
             returnMsg = `@${
               msg.from.username
             } your signature was verified, but the address only has a merit value of ${
