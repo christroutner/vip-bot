@@ -10,7 +10,8 @@ const TGUser = new mongoose.Schema({
   bchAddr: { type: String, default: '' },
   slpAddr: { type: String, default: '' },
   merit: { type: Number, default: 0 },
-  hasVerified: { type: Boolean, default: false }
+  hasVerified: { type: Boolean, default: false },
+  lastVerified: { type: String, default: '' }
 })
 
 // export default mongoose.model('user', User)

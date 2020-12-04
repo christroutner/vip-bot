@@ -11,7 +11,7 @@ const BCH = require('./bch')
 const wlogger = require('./wlogger')
 
 // Constants
-const PSF_THRESHOLD = 30000
+const PSF_THRESHOLD = 15000
 
 let _this // Global variable for 'this' reference to the class instance.
 
@@ -167,6 +167,8 @@ class Bot {
           })
           // console.log(`tgUser: ${JSON.stringify(tgUser, null, 2)}`)
 
+          const now = new Date()
+
           tgUser.bchAddr = _this.bch.bchjs.SLP.Address.toCashAddress(
             msgParts[1]
           )
@@ -179,6 +181,8 @@ class Bot {
           if (tgUser.merit >= PSF_THRESHOLD) {
             // Mark the database model as having been verified.
             tgUser.hasVerified = true
+
+            tgUser.lastVerified = now.toISOString()
 
             returnMsg = `@${
               msg.from.username
