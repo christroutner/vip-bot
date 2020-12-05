@@ -109,6 +109,59 @@ describe('#bot.js', () => {
 
       assert.equal(result, undefined)
     })
+
+    it('should verify merit if last check was more than 24 hours', async () => {
+      // Adjust the timestamp on the test user.
+      const FOURTY_EIGHT_HOURS = 60000 * 60 * 24 * 2
+      const now = new Date()
+      let twoDaysAgo = now.getTime() - FOURTY_EIGHT_HOURS
+      twoDaysAgo = new Date(twoDaysAgo)
+      mockData.mockVerifiedUser.lastVerified = twoDaysAgo
+
+      // Lower merit threshold for this test.
+      uut.PSF_THRESHOLD = 2
+
+      // Mock tgUser database record..
+      sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockVerifiedUser)
+
+      // Mock the merit check.
+      sandbox.stub(uut.bch, 'getMerit').resolves(50)
+
+      const result = await uut.processMsg(mockData.mockMsg)
+
+      // Return value should reflect the expected code path.
+      assert.equal(result, 4)
+      assert.equal(mockData.mockVerifiedUser.hasVerified, true)
+      assert.isAbove(new Date(mockData.mockVerifiedUser.lastVerified), twoDaysAgo)
+    })
+
+    it('should mark users unverified if they lost their merit', async () => {
+      // Adjust the timestamp on the test user.
+      const FOURTY_EIGHT_HOURS = 60000 * 60 * 24 * 2
+      const now = new Date()
+      let twoDaysAgo = now.getTime() - FOURTY_EIGHT_HOURS
+      twoDaysAgo = new Date(twoDaysAgo)
+      mockData.mockVerifiedUser.lastVerified = twoDaysAgo
+
+      // Increate merit threshold above merit check.
+      uut.PSF_THRESHOLD = 200
+
+      // Mock tgUser database record..
+      sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockVerifiedUser)
+
+      // Mock the merit check.
+      sandbox.stub(uut.bch, 'getMerit').resolves(50)
+
+      // Mock bot messages.
+      sandbox.stub(uut.bot, 'sendMessage').resolves()
+      sandbox.stub(uut, 'deleteBotSpam').resolves()
+
+      const result = await uut.processMsg(mockData.mockMsg)
+
+      // Return value should reflect the expected code path.
+      assert.equal(result, 4)
+      assert.equal(mockData.mockVerifiedUser.hasVerified, false)
+    })
   })
 
   describe('#verifyUser', () => {

@@ -10,9 +10,6 @@ const TGUser = require('../models/tg-user')
 const BCH = require('./bch')
 const wlogger = require('./wlogger')
 
-// Constants
-const PSF_THRESHOLD = 30000
-
 let _this // Global variable for 'this' reference to the class instance.
 
 class Bot {
@@ -43,7 +40,11 @@ class Bot {
 
     // console.log(`this.token: ${this.token}, this.chatId: ${this.chatId}`)
 
-    // Encapulate external dependencies.
+    // Using constants here so they can be manipulated in tests.
+    this.TWENTY_FOUR_HOURS = 60000 * 60 * 24
+    this.PSF_THRESHOLD = 30000
+
+    // Encapsulate external dependencies.
     this.TGUser = TGUser
     this.bch = new BCH()
 
@@ -108,22 +109,27 @@ class Bot {
 
       // If more than 24 hours has passed since the user's merit was verified,
       // reverify it.
-      const TWENTY_FOUR_HOURS = 60000 * 60 * 24
-      // const TWENTY_FOUR_HOURS = 1
       const now = new Date()
       const nowNum = now.getTime()
       const lastVerifiedDate = new Date(tgUser.lastVerified)
       const timeDiff = nowNum - lastVerifiedDate.getTime()
-      if (timeDiff > TWENTY_FOUR_HOURS) {
+      if (timeDiff > _this.TWENTY_FOUR_HOURS) {
+        wlogger.debug('More than 24 hours since user was verified.')
+
         // Update the merit.
         tgUser.merit = await _this.bch.getMerit(tgUser.slpAddr)
+        wlogger.debug(`merit: ${tgUser.merit}, threshold: ${_this.PSF_THRESHOLD}`)
 
         // Merit meets the threshold.
-        if (tgUser.merit >= PSF_THRESHOLD) {
+        if (tgUser.merit >= _this.PSF_THRESHOLD) {
+          wlogger.debug('User had their merit reverified.')
+
           // Mark the database model as having been verified.
           tgUser.hasVerified = true
           tgUser.lastVerified = now.toISOString()
         } else {
+          wlogger.debug('Users merit has falled below threshold.')
+
           // Mark the database model as being unverified.
           tgUser.hasVerified = false
 
@@ -141,6 +147,8 @@ class Bot {
 
         // Save the user to the database.
         await tgUser.save()
+
+        return 4
       }
 
       return 3 // Used for testing.
@@ -217,7 +225,7 @@ class Bot {
           tgUser.lastVerified = now.toISOString()
 
           // Merit meets the threshold.
-          if (tgUser.merit >= PSF_THRESHOLD) {
+          if (tgUser.merit >= _this.PSF_THRESHOLD) {
             // Mark the database model as having been verified.
             tgUser.hasVerified = true
 
@@ -235,7 +243,7 @@ class Bot {
               msg.from.username
             } your signature was verified, but the address only has a merit value of ${
               tgUser.merit
-            }, which does not meet the threashold of ${PSF_THRESHOLD}.`
+            }, which does not meet the threashold of ${_this.PSF_THRESHOLD}.`
             retVal = 3
           }
 

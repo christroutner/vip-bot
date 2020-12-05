@@ -34,15 +34,18 @@ const mockUnverifiedUser = {
   save: () => {} // Mock the save() function.
 }
 
+const now = new Date()
 const mockVerifiedUser = {
   username: 'christroutner',
   bchAddr: 'bitcoincash:qpwdyj5adnzf2cruyr5c3lzrlec9hqphzqyzpn0tdf',
   slpAddr: 'simpleledger:qpwdyj5adnzf2cruyr5c3lzrlec9hqphzqge2g6tnh',
   merit: 94,
   hasVerified: true,
+  lastVerified: now.toISOString(),
   _id: '5fc0037b02da93045b4beaed',
   tgId: 649043967,
-  __v: 0
+  __v: 0,
+  save: () => {} // Mock the save() function.
 }
 
 const validVerifyMsg = {
