@@ -42,7 +42,7 @@ class Bot {
 
     // Using constants here so they can be manipulated in tests.
     this.TWENTY_FOUR_HOURS = 60000 * 60 * 24
-    this.PSF_THRESHOLD = 30000
+    this.PSF_THRESHOLD = 1000
 
     // Encapsulate external dependencies.
     this.TGUser = TGUser
@@ -118,7 +118,9 @@ class Bot {
 
         // Update the merit.
         tgUser.merit = await _this.bch.getMerit(tgUser.slpAddr)
-        wlogger.debug(`merit: ${tgUser.merit}, threshold: ${_this.PSF_THRESHOLD}`)
+        wlogger.debug(
+          `merit: ${tgUser.merit}, threshold: ${_this.PSF_THRESHOLD}`
+        )
 
         // Merit meets the threshold.
         if (tgUser.merit >= _this.PSF_THRESHOLD) {
@@ -212,16 +214,29 @@ class Bot {
           })
           // console.log(`tgUser: ${JSON.stringify(tgUser, null, 2)}`)
 
-          const now = new Date()
+          const bchAddr = _this.bch.bchjs.SLP.Address.toCashAddress(msgParts[1])
 
-          tgUser.bchAddr = _this.bch.bchjs.SLP.Address.toCashAddress(
-            msgParts[1]
-          )
+          // Return an error and exit if another user has already claimed that
+          // address.
+          const addressIsClaimed = await _this.checkDupClaim(bchAddr, msg)
+          if (addressIsClaimed) {
+            returnMsg = `@${addressIsClaimed} has already claimed that address. They must first revoke it with the /revoke command.`
+
+            const botMsg = await _this.bot.sendMessage(_this.chatId, returnMsg)
+
+            // Delete bot spam after some time.
+            _this.deleteBotSpam(msg, botMsg)
+
+            return 5 // Return specific value for testing.
+          }
+
+          // Calculate values to store in the tg-user model for this user.
+          tgUser.bchAddr = bchAddr
           tgUser.slpAddr = _this.bch.bchjs.SLP.Address.toSLPAddress(
             tgUser.bchAddr
           )
           tgUser.merit = await _this.bch.getMerit(tgUser.slpAddr)
-
+          const now = new Date()
           tgUser.lastVerified = now.toISOString()
 
           // Merit meets the threshold.
@@ -263,6 +278,34 @@ class Bot {
         `Error in bot.js/verifyUser() at ${now.toLocaleString()}: `,
         err
       )
+    }
+  }
+
+  // Check to see if the address is already claimed.
+  // It returns false if no user has claimed the bchAddr. Otherwise it returns
+  // the Telegram username of the person who 'owns' the address.
+  async checkDupClaim (bchAddr, msg) {
+    try {
+      const tgUser = await _this.TGUser.findOne({ bchAddr })
+
+      // If no user is found, return false.
+      if (!tgUser) return false
+
+      const msgSender = msg.from.username
+
+      // If the user is the same one who 'owns' the address, then return false.
+      if (msgSender === tgUser.username) return false
+
+      // Otherwise return the Telegram username of the person who 'owns' the
+      // address.
+      return tgUser.username
+    } catch (err) {
+      const now = new Date()
+      wlogger.error(
+        `Error in bot.js/checkDupClaim() at ${now.toLocaleString()}: `,
+        err
+      )
+      return 'errorInCheckDupClaim'
     }
   }
 
@@ -346,19 +389,27 @@ Available commands:
     if (msg.chat.type === 'supergroup') {
       setTimeout(async function () {
         try {
-          // _this.bot.deleteMessage(_this.chatId, msg.message_id)
           await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
+        } catch (err) {
+          /* Exit quietly */
+        }
+
+        try {
           await _this.bot.deleteMessage(botMsg.chat.id, botMsg.message_id)
         } catch (err) {
-          wlogger.error(
-            `Error in deleteBotSpam().\nmsg: ${JSON.stringify(
-              msg,
-              null,
-              2
-            )}\nbotMsg: ${JSON.stringify(botMsg, null, 2)}\nError: `,
-            err
-          )
+          /* Exit quietly */
         }
+
+        // } catch (err) {
+        //   wlogger.error(
+        //     `Error in deleteBotSpam().\nmsg: ${JSON.stringify(
+        //       msg,
+        //       null,
+        //       2
+        //     )}\nbotMsg: ${JSON.stringify(botMsg, null, 2)}\nError: `,
+        //     err
+        //   )
+        // }
       }, 30000) // 30 seconds.
     }
   }

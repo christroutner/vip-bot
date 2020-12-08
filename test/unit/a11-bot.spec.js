@@ -132,7 +132,10 @@ describe('#bot.js', () => {
       // Return value should reflect the expected code path.
       assert.equal(result, 4)
       assert.equal(mockData.mockVerifiedUser.hasVerified, true)
-      assert.isAbove(new Date(mockData.mockVerifiedUser.lastVerified), twoDaysAgo)
+      assert.isAbove(
+        new Date(mockData.mockVerifiedUser.lastVerified),
+        twoDaysAgo
+      )
     })
 
     it('should mark users unverified if they lost their merit', async () => {
@@ -190,6 +193,7 @@ describe('#bot.js', () => {
       sandbox.stub(uut.bot, 'sendMessage').resolves()
       sandbox.stub(uut.bch, 'verifyMsg').resolves(true)
       sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockUnverifiedUser)
+      sandbox.stub(uut, 'checkDupClaim').resolves(false)
       // Force merit to be below threshold
       sandbox.stub(uut.bch, 'getMerit').resolves(0.1)
 
@@ -203,6 +207,7 @@ describe('#bot.js', () => {
       sandbox.stub(uut.bot, 'sendMessage').resolves()
       sandbox.stub(uut.bch, 'verifyMsg').resolves(true)
       sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockUnverifiedUser)
+      sandbox.stub(uut, 'checkDupClaim').resolves(false)
       // Force merit to be below threshold
       sandbox.stub(uut.bch, 'getMerit').resolves(35000)
 
@@ -220,6 +225,20 @@ describe('#bot.js', () => {
       const result = await uut.verifyUser(mockData.validVerifyMsg)
 
       assert.equal(result, undefined)
+    })
+
+    it('should throw error if the address is already claimed', async () => {
+      // Mock to force the code path for this test.
+      sandbox.stub(uut.bot, 'sendMessage').resolves()
+      sandbox.stub(uut.bch, 'verifyMsg').resolves(true)
+      sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockUnverifiedUser)
+
+      // Report that address has already been claimed.
+      sandbox.stub(uut, 'checkDupClaim').resolves('testuser')
+
+      const result = await uut.verifyUser(mockData.validVerifyMsg)
+
+      assert.equal(result, 5)
     })
   })
 
@@ -295,6 +314,53 @@ describe('#bot.js', () => {
       const result = await uut.getMerit(mockData.mockGetMeritMsg)
 
       assert.equal(result, undefined)
+    })
+  })
+
+  describe('#checkDupClaim', () => {
+    it('should return false if user matching address is not found in DB', async () => {
+      // Force DB returning user-not-found
+      sandbox.stub(uut.TGUser, 'findOne').resolves(null)
+
+      const bchAddr = 'bitcoincash:qzz5tft0pssynhqa2297q2583dmjdql5fvpd876h5k'
+
+      const result = await uut.checkDupClaim(bchAddr, mockData.validVerifyMsg)
+
+      assert.equal(result, false)
+    })
+
+    it('should return false if owner issued /verify command', async () => {
+      // Force DB returning user-not-found
+      sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockVerifiedUser)
+
+      const bchAddr = 'bitcoincash:qpwdyj5adnzf2cruyr5c3lzrlec9hqphzqyzpn0tdf'
+
+      const result = await uut.checkDupClaim(bchAddr, mockData.validVerifyMsg)
+
+      assert.equal(result, false)
+    })
+
+    it('should return TG username if address has been claimed', async () => {
+      // Force DB returning user-not-found
+      mockData.mockVerifiedUser.username = 'testUser'
+      sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockVerifiedUser)
+
+      const bchAddr = 'bitcoincash:qpwdyj5adnzf2cruyr5c3lzrlec9hqphzqyzpn0tdf'
+
+      const result = await uut.checkDupClaim(bchAddr, mockData.validVerifyMsg)
+
+      assert.equal(result, 'testUser')
+    })
+
+    it('should catch and report errors', async () => {
+      // Force an error
+      sandbox.stub(uut.TGUser, 'findOne').rejects(new Error('test error'))
+
+      const bchAddr = 'bitcoincash:qpwdyj5adnzf2cruyr5c3lzrlec9hqphzqyzpn0tdf'
+
+      const result = await uut.checkDupClaim(bchAddr, mockData.validVerifyMsg)
+
+      assert.equal(result, 'errorInCheckDupClaim')
     })
   })
 })
