@@ -58,6 +58,7 @@ class Bot {
     this.bot.onText(/\/verify/, this.verifyUser)
     this.bot.onText(/\/help/, this.help)
     this.bot.onText(/\/merit/, this.getMerit)
+    this.bot.onText(/\/revoke/, this.revoke)
 
     // Used for debugging.
     // setInterval(function () {
@@ -399,18 +400,72 @@ Available commands:
         } catch (err) {
           /* Exit quietly */
         }
-
-        // } catch (err) {
-        //   wlogger.error(
-        //     `Error in deleteBotSpam().\nmsg: ${JSON.stringify(
-        //       msg,
-        //       null,
-        //       2
-        //     )}\nbotMsg: ${JSON.stringify(botMsg, null, 2)}\nError: `,
-        //     err
-        //   )
-        // }
       }, 30000) // 30 seconds.
+    }
+  }
+
+  // Allows a user to revoke ownership of a BCH address. It allows other users
+  // to claim it.
+  async revoke (msg) {
+    try {
+      let retVal = 0 // Default return value.
+      let retMsg = ''
+
+      // Convert the message into an array of parts.
+      const msgParts = msg.text.toString().split(' ')
+      // console.log(`msgParts: ${JSON.stringify(msgParts, null, 2)}`)
+
+      // If the message does not have 3 parts, ignore it.
+      if (msgParts.length === 2) {
+        retVal = 1 // Signal that the message was formatted correctly.
+
+        const bchAddr = msgParts[1]
+
+        const tgUser = await _this.TGUser.findOne({ bchAddr })
+
+        // If no user is found, return false.
+        if (!tgUser) {
+          retMsg = `A user with address ${bchAddr} could not be found in the database`
+          retVal = 2
+        } else {
+          // User was found in the database.
+
+          const msgSender = msg.from.username
+
+          // If the user is the same one who 'owns' the address, then return false.
+          if (msgSender !== tgUser.username) {
+            retMsg = `@${
+              msg.from.username
+            } you do not own address ${bchAddr}, so you can not revoke ownership of it.`
+            retVal = 3
+          } else {
+            // User is currently assigned the address.
+
+            // Update the tg-user model for this user.
+            tgUser.bchAddr = ''
+            tgUser.slpAddr = ''
+            tgUser.hasVerified = false
+            tgUser.merit = 0
+            await tgUser.save()
+
+            retMsg = `@${
+              msg.from.username
+            } you have successfully revoked ownership of address ${bchAddr}`
+            retVal = 4
+          }
+        }
+      }
+
+      const botMsg = await _this.bot.sendMessage(retMsg)
+
+      // Delete bot spam after some time.
+      _this.deleteBotSpam(msg, botMsg)
+
+      return retVal
+    } catch (err) {
+      // console.error(err)
+      wlogger.error('Error in bot.js/revoke(): ', err)
+      return 6
     }
   }
 }

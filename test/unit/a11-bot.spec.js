@@ -341,7 +341,7 @@ describe('#bot.js', () => {
     })
 
     it('should return TG username if address has been claimed', async () => {
-      // Force DB returning user-not-found
+      // Force DB to return different user
       mockData.mockVerifiedUser.username = 'testUser'
       sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockVerifiedUser)
 
@@ -361,6 +361,70 @@ describe('#bot.js', () => {
       const result = await uut.checkDupClaim(bchAddr, mockData.validVerifyMsg)
 
       assert.equal(result, 'errorInCheckDupClaim')
+    })
+  })
+
+  describe('#revoke', () => {
+    it('should return 0 on malformed command', async () => {
+      // Mock calls to the bot.
+      sandbox.stub(uut.bot, 'sendMessage').resolves()
+      sandbox.stub(uut, 'deleteBotSpam').returns()
+
+      const result = await uut.revoke(mockData.invalidRevokeMsg1)
+      // console.log('result: ', result)
+
+      assert.equal(result, 0)
+    })
+
+    it('should return 2 if user can not be found', async () => {
+      // Mock calls to the bot.
+      sandbox.stub(uut.bot, 'sendMessage').resolves()
+      sandbox.stub(uut, 'deleteBotSpam').returns()
+
+      // Force user-not-found in database.
+      sandbox.stub(uut.TGUser, 'findOne').resolves(null)
+
+      const result = await uut.revoke(mockData.validRevokeMsg)
+      // console.log('result: ', result)
+
+      assert.equal(result, 2)
+    })
+
+    it('should return 3 if command issuer is not address owner', async () => {
+      // Mock calls to the bot.
+      sandbox.stub(uut.bot, 'sendMessage').resolves()
+      sandbox.stub(uut, 'deleteBotSpam').returns()
+
+      // Force DB to return different user
+      mockData.mockVerifiedUser.username = 'testUser'
+      sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockVerifiedUser)
+
+      const result = await uut.revoke(mockData.validRevokeMsg)
+      // console.log('result: ', result)
+
+      assert.equal(result, 3)
+    })
+
+    it('should return 4 on success revokation of address', async () => {
+      // Mock calls to the bot.
+      sandbox.stub(uut.bot, 'sendMessage').resolves()
+      sandbox.stub(uut, 'deleteBotSpam').returns()
+
+      sandbox.stub(uut.TGUser, 'findOne').resolves(mockData.mockVerifiedUser)
+
+      const result = await uut.revoke(mockData.validRevokeMsg)
+      // console.log('result: ', result)
+
+      assert.equal(result, 4)
+    })
+
+    it('should catch and report errors', async () => {
+      // Force an error
+      sandbox.stub(uut.TGUser, 'findOne').rejects(new Error('test error'))
+
+      const result = await uut.revoke(mockData.validRevokeMsg)
+
+      assert.equal(result, 6)
     })
   })
 })

@@ -225,6 +225,48 @@ const getMeritInvalidArgs = {
   ]
 }
 
+const invalidRevokeMsg1 = {
+  message_id: 109,
+  from: {
+    id: 649043967,
+    is_bot: false,
+    first_name: 'Chris',
+    last_name: 'Troutner',
+    username: 'christroutner',
+    language_code: 'en'
+  },
+  chat: {
+    id: -1001337281108,
+    title: 'trout-test',
+    username: 'trout_test',
+    type: 'supergroup'
+  },
+  date: 1606420420,
+  text: '/revoke abc def geh',
+  entities: [{ offset: 0, length: 7, type: 'bot_command' }]
+}
+
+const validRevokeMsg = {
+  message_id: 109,
+  from: {
+    id: 649043967,
+    is_bot: false,
+    first_name: 'Chris',
+    last_name: 'Troutner',
+    username: 'christroutner',
+    language_code: 'en'
+  },
+  chat: {
+    id: -1001337281108,
+    title: 'trout-test',
+    username: 'trout_test',
+    type: 'supergroup'
+  },
+  date: 1606420420,
+  text: '/revoke bitcoincash:qpwdyj5adnzf2cruyr5c3lzrlec9hqphzqyzpn0tdf',
+  entities: [{ offset: 0, length: 7, type: 'bot_command' }]
+}
+
 module.exports = {
   mockMsg,
   mockUnverifiedUser,
@@ -235,5 +277,7 @@ module.exports = {
   mockHelpCmd,
   mockGetMeritMsg,
   getMeritUserNotFound,
-  getMeritInvalidArgs
+  getMeritInvalidArgs,
+  invalidRevokeMsg1,
+  validRevokeMsg
 }
