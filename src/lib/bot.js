@@ -42,7 +42,7 @@ class Bot {
 
     // Using constants here so they can be manipulated in tests.
     this.TWENTY_FOUR_HOURS = 60000 * 60 * 24
-    this.PSF_THRESHOLD = 1000
+    this.PSF_THRESHOLD = 30000
 
     // Encapsulate external dependencies.
     this.TGUser = TGUser
