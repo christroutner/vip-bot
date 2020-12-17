@@ -57,6 +57,7 @@ class Bot {
     this.bot.on('message', this.processMsg)
     this.bot.onText(/\/verify/, this.verifyUser)
     this.bot.onText(/\/help/, this.help)
+    this.bot.onText(/\/start/, this.help)
     this.bot.onText(/\/merit/, this.getMerit)
     this.bot.onText(/\/revoke/, this.revoke)
 
@@ -324,18 +325,31 @@ To verify your merit, follow these steps:
 3) Use the /verify command to verify your wallet address, like this:
   /verify <your BCH address> <The signed message>
 
-4) Purchase PSF tokens at https://PSFoundation.cash or earn them by completing programming tasks. Send these tokens to your wallet address.
+4) Purchase PSF tokens at https://PSFoundation.cash or earn them by completing programming tasks (bounties can be found here: https://github.com/Permissionless-Software-Foundation/bounties). Send these tokens to your wallet address.
 
+Your 'Merit' is calculated this way:
 Merit = token quantity X token age (in days)
 
-If you purchase fewer tokens, it will take more time to aquire the required merit. If you purchase more, it takes less time.
+If you obtain fewer tokens, it will take more time to aquire the required merit. If you obtain more, it takes less time.
+
+A video walkthrough of how to join the VIP room, as well as how to use other PSF communication channels can be found here:
+https://youtu.be/KOlM4dU6Gj0
 
 If you need help, ask for guidence on @permissionless_software
 
 Available commands:
-  /help
+
+  /help or /start
+    - Bring up this help message.
+
   /verify <BCH address> <signed message>
+    - Verify that you own the Bitcoin Cash address by signing a message. The bot will track the merit associated with this address.
+
+  /revoke <BCH address>
+    - Revoke ownership of a BCH address.
+
   /merit @username
+    - Query the merit for a user in this channel.
 `
 
     const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
@@ -415,7 +429,7 @@ Available commands:
       const msgParts = msg.text.toString().split(' ')
       // console.log(`msgParts: ${JSON.stringify(msgParts, null, 2)}`)
 
-      // If the message does not have 3 parts, ignore it.
+      // If the message does not have 2 parts, ignore it.
       if (msgParts.length === 2) {
         retVal = 1 // Signal that the message was formatted correctly.
 
