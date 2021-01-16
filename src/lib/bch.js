@@ -37,6 +37,7 @@ class Bch {
     try {
       // Get the aggregated merit of the address.
       const merit = await this.bchMsg.merit.agMerit(slpAddr)
+      console.log(`merit: ${merit}`)
 
       return merit
     } catch (err) {
