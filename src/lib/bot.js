@@ -60,6 +60,7 @@ class Bot {
     this.bot.onText(/\/start/, this.help)
     this.bot.onText(/\/merit/, this.getMerit)
     this.bot.onText(/\/revoke/, this.revoke)
+    this.bot.onText(/\/list/, this.list)
 
     // Used for debugging.
     // setInterval(function () {
@@ -350,6 +351,9 @@ Available commands:
 
   /merit @username
     - Query the merit for a user in this channel.
+
+  /list
+    - List all the people in the channel that have enough merit to speak.
 `
 
     const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
@@ -480,6 +484,31 @@ Available commands:
       // console.error(err)
       wlogger.error('Error in bot.js/revoke(): ', err)
       return 6
+    }
+  }
+
+  // List all the people that have the ability to speak in the VIP room.
+  async list (msg) {
+    try {
+      const users = await _this.TGUser.find({ hasVerified: true })
+      // console.log(`users: ${JSON.stringify(users, null, 2)}`)
+
+      let outStr = 'Verified users in this channel:\n'
+      for (let i = 0; i < users.length; i++) {
+        const thisUser = users[i]
+
+        outStr += `@${thisUser.username}`
+      }
+      outStr += '\n'
+
+      // console.log(`${outStr}`)
+
+      const botMsg = await _this.bot.sendMessage(msg.chat.id, outStr)
+
+      // Delete bot spam after some time.
+      _this.deleteBotSpam(msg, botMsg)
+    } catch (err) {
+      wlogger.error('Error in bot.js/list(): ', err)
     }
   }
 }
