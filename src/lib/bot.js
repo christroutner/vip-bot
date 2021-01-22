@@ -497,7 +497,7 @@ Available commands:
       for (let i = 0; i < users.length; i++) {
         const thisUser = users[i]
 
-        outStr += `@${thisUser.username}`
+        outStr += `@${thisUser.username}\n`
       }
       outStr += '\n'
 
