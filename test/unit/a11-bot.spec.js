@@ -427,4 +427,68 @@ describe('#bot.js', () => {
       assert.equal(result, 6)
     })
   })
+
+  describe('#list', () => {
+    it('should return message when triggered', async () => {
+      // Mock calls to the bot.
+      sandbox.stub(uut.TGUser, 'find').resolves([mockData.mockVerifiedUser])
+      sandbox.stub(uut.bot, 'sendMessage').resolves()
+      sandbox.stub(uut, 'deleteBotSpam').returns()
+
+      const result = await uut.list(mockData.mockHelpCmd)
+      // console.log('result: ', result)
+
+      assert.equal(result, undefined)
+    })
+
+    it('should catch and report errors', async () => {
+      // Force an error
+      sandbox.stub(uut.TGUser, 'find').rejects(new Error('test error'))
+
+      const result = await uut.list(mockData.validRevokeMsg)
+
+      assert.equal(result, undefined)
+    })
+  })
+
+  describe('#deleteBotSpam', () => [
+    it('should start a timer', () => {
+      const timerHandle = uut.deleteBotSpam(
+        mockData.invalidVerifyMsg1,
+        mockData.invalidVerifyMsg1
+      )
+
+      clearTimeout(timerHandle)
+
+      assert(true, 'Test passed')
+    })
+  ])
+
+  describe('#_deleteMsgQuietly', () => {
+    it('should delete a message', async () => {
+      // Mock calls to the bot.
+      sandbox.stub(uut.bot, 'deleteMessage').resolves()
+
+      const chatId = mockData.invalidVerifyMsg1.chat.id
+      const msgId = mockData.invalidVerifyMsg1.chat.id
+
+      await uut._deleteMsgQuietly(chatId, msgId)
+
+      assert(true, 'Test passed')
+    })
+  })
+
+  describe('#_deleteMsgs', () => {
+    it('should delete both messages', async () => {
+      // Mock calls to the bot.
+      sandbox.stub(uut, '_deleteMsgQuietly').resolves()
+
+      const msg = mockData.invalidVerifyMsg1
+      const botMsg = mockData.invalidVerifyMsg1
+
+      await uut._deleteMsgs(msg, botMsg)
+
+      assert(true, 'Test passed')
+    })
+  })
 })
