@@ -205,7 +205,10 @@ class Bot {
           isValidSig = _this.bch.verifyMsg(verifyObj)
           // console.log(`Signature is valid: ${isValidSig}`)
         } catch (err) {
-          await _this.bot.sendMessage(_this.chatId, returnMsg)
+          const botMsg = await _this.bot.sendMessage(_this.chatId, returnMsg)
+
+          // Delete bot spam after some time.
+          _this.deleteBotSpam(msg, botMsg)
 
           return retVal
         }
