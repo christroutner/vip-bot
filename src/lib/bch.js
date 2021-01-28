@@ -19,8 +19,11 @@ class Bch {
       // Expand the input object.
       const { bchAddr, signedMsg } = verifyObj
 
+      // Convert to BCH address.
+      const scrubbedAddr = this.bchjs.SLP.Address.toCashAddress(bchAddr)
+
       const isValid = this.bchjs.BitcoinCash.verifyMessage(
-        bchAddr,
+        scrubbedAddr,
         signedMsg,
         'verify'
       )

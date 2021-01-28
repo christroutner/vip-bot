@@ -410,7 +410,7 @@ Available commands:
     // a chance to read it. This will prevent bot spam.
     if (msg.chat.type === 'supergroup') {
       const timerHandle = setTimeout(async function () {
-        await _this.deleteMsgs(msg, botMsg)
+        await _this._deleteMsgs(msg, botMsg)
       }, 30000) // 30 seconds.
 
       return timerHandle
