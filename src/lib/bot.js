@@ -205,7 +205,10 @@ class Bot {
           isValidSig = _this.bch.verifyMsg(verifyObj)
           // console.log(`Signature is valid: ${isValidSig}`)
         } catch (err) {
-          await _this.bot.sendMessage(_this.chatId, returnMsg)
+          const botMsg = await _this.bot.sendMessage(_this.chatId, returnMsg)
+
+          // Delete bot spam after some time.
+          _this.deleteBotSpam(msg, botMsg)
 
           return retVal
         }
@@ -406,19 +409,24 @@ Available commands:
     // If this command is issued in the group, delete it after the user has had
     // a chance to read it. This will prevent bot spam.
     if (msg.chat.type === 'supergroup') {
-      setTimeout(async function () {
-        try {
-          await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
-        } catch (err) {
-          /* Exit quietly */
-        }
-
-        try {
-          await _this.bot.deleteMessage(botMsg.chat.id, botMsg.message_id)
-        } catch (err) {
-          /* Exit quietly */
-        }
+      const timerHandle = setTimeout(async function () {
+        await _this._deleteMsgs(msg, botMsg)
       }, 30000) // 30 seconds.
+
+      return timerHandle
+    }
+  }
+
+  async _deleteMsgs (msg, botMsg) {
+    await _this._deleteMsgQuietly(msg.chat.id, msg.message_id)
+    await _this._deleteMsgQuietly(botMsg.chat.id, botMsg.message_id)
+  }
+
+  async _deleteMsgQuietly (chatId, msgId) {
+    try {
+      await _this.bot.deleteMessage(chatId, msgId)
+    } catch (err) {
+      /* Exit quietly */
     }
   }
 
