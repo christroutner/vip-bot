@@ -80,7 +80,7 @@ async function startServer () {
   if (success) console.log('System admin user created.')
 
   if (config.env !== 'test') {
-    const msg = tgBot.start()
+    const msg = await tgBot.start()
     console.log(msg)
   }
 

@@ -28,12 +28,14 @@ class TGBot {
   async start () {
     // Get the JWT token needed to interact with the FullStack.cash API.
     await this.getJwt()
+    await this.bot.bot.stopPolling()
     this.bot = new Bot()
 
     // Renew the JWT token every 24 hours
     setInterval(async function () {
       console.log('Updating FullStack.cash JWT token')
       await _this.getJwt()
+      _this.bot.bot.stopPolling()
       _this.bot = new Bot()
     }, 60000 * 60 * 24)
 
