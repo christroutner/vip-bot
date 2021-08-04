@@ -11,6 +11,7 @@ class Bch {
     // Encapsulate dependencies
     this.bchjs = new BCHJS()
     this.bchMsg = new BchMessage({ bchjs: this.bchjs })
+    this.tokenId = config.tokenId
   }
 
   // Verify that the signed message 'verify' was signed by a specific BCH address.
@@ -39,7 +40,7 @@ class Bch {
   async getMerit (slpAddr) {
     try {
       // Get the aggregated merit of the address.
-      const merit = await this.bchMsg.merit.agMerit(slpAddr)
+      const merit = await this.bchMsg.merit.agMerit(slpAddr, this.tokenId)
       console.log(`merit: ${merit}`)
 
       return merit
