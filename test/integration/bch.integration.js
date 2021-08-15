@@ -8,13 +8,14 @@
 */
 
 const assert = require('chai').assert
+const config = require('../../config')
 
 const BCHLib = require('../../src/lib/bch')
 let uut
 
 describe('#bch.js', () => {
   beforeEach(() => {
-    uut = new BCHLib()
+    uut = new BCHLib(config)
   })
 
   describe('#verifyMsg', () => {

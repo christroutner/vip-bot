@@ -16,7 +16,7 @@ const config = require('../config') // this first.
 let tgBot
 if (config.env !== 'test') {
   const TGBot = require('./tg-bot')
-  tgBot = new TGBot()
+  tgBot = new TGBot(config)
 }
 
 const AdminLib = require('../src/lib/admin')

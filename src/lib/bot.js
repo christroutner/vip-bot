@@ -46,7 +46,7 @@ class Bot {
 
     // Encapsulate external dependencies.
     this.TGUser = TGUser
-    this.bch = new BCH()
+    this.bch = new BCH(config)
 
     // Created instance of TelegramBot
     this.bot = new TelegramBot(this.token, {
