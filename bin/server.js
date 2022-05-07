@@ -50,9 +50,10 @@ async function startServer () {
   app.use(passport.initialize())
   app.use(passport.session())
 
-  // Custom Middleware Modules
-  const modules = require('../src/modules')
-  modules(app)
+  // Attach REST API and JSON RPC controllers to the app.
+  const Controllers = require('../src/controllers')
+  const controllers = new Controllers()
+  await controllers.attachRESTControllers(app)
 
   // Enable CORS for testing
   // THIS IS A SECURITY RISK. COMMENT OUT FOR PRODUCTION

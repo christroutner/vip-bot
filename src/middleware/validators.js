@@ -42,7 +42,7 @@ class Validators {
         ctx.throw(401)
       }
 
-      return next()
+      return true
     } catch (error) {
       ctx.throw(401)
     }
@@ -80,7 +80,7 @@ class Validators {
         ctx.throw(401, 'not admin')
       }
 
-      return next()
+      return true
     } catch (error) {
       ctx.throw(401, error.message)
     }
@@ -140,7 +140,7 @@ class Validators {
         }
       }
 
-      return next()
+      return true
     } catch (error) {
       ctx.throw(401, error.message)
     }
