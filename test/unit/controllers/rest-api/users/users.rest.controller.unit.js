@@ -8,16 +8,16 @@ const sinon = require('sinon')
 const mongoose = require('mongoose')
 
 // Local support libraries
-const config = require('../../../config')
-const testUtils = require('../../utils/test-utils')
-const User = require('../../../src/models/users')
+const config = require('../../../../../config')
+const testUtils = require('../../../../utils/test-utils')
+const User = require('../../../../../src/models/users')
 
-const UserController = require('../../../src/modules/users/controller')
+const UserController = require('../../../../../src/controllers/rest-api/users/controller')
 let uut
 let sandbox
 let ctx
 
-const mockContext = require('../../unit/mocks/ctx-mock').context
+const mockContext = require('../../../../unit/mocks/ctx-mock').context
 
 describe('Users', () => {
   let testUser = {}
@@ -251,6 +251,7 @@ describe('Users', () => {
       assert.equal(ctx.status, 200)
     })
   })
+
   describe('validateEmail()', () => {
     it('should return false if email is not provided ', async () => {
       const isEmail = await uut.validateEmail()
