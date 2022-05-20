@@ -7,7 +7,7 @@
 // Public npm libraries.
 
 // Load the Clean Architecture Adapters library
-const Adapters = class {} // require('../adapters')
+const Adapters = require('../adapters')
 
 // Load the Clean Architecture Use Case libraries.
 const UseCases = class {} // require('../use-cases')

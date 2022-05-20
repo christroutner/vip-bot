@@ -10,9 +10,11 @@ const mongoose = require('mongoose')
 // Local support libraries
 const config = require('../../../../../config')
 const testUtils = require('../../../../utils/test-utils')
-const User = require('../../../../../src/models/users')
+const User = require('../../../../../src/adapters/localdb/models/users')
 
 const UserController = require('../../../../../src/controllers/rest-api/users/controller')
+const adapters = require('../../../mocks/adapters')
+
 let uut
 let sandbox
 let ctx
@@ -61,7 +63,7 @@ describe('Users', () => {
   })
 
   beforeEach(() => {
-    uut = new UserController()
+    uut = new UserController({ adapters })
 
     sandbox = sinon.createSandbox()
 
@@ -76,6 +78,20 @@ describe('Users', () => {
   })
 
   describe('#POST /users', () => {
+    describe('#constructor', () => {
+      it('should throw an error if adapters are not passed in', () => {
+        try {
+          uut = new UserController()
+
+          assert.fail('Unexpected code path')
+        } catch (err) {
+          assert.include(
+            err.message,
+            'Instance of Adapters library required when instantiating /users REST Controller.'
+          )
+        }
+      })
+    })
     it('should return 422 status on biz logic error', async () => {
       try {
         await uut.createUser(ctx)

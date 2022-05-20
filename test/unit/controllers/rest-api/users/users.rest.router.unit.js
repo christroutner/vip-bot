@@ -12,6 +12,9 @@ const sinon = require('sinon')
 // const app = require('../../../mocks/app-mock')
 
 const UserRouter = require('../../../../../src/controllers/rest-api/users')
+const adapters = require('../../../mocks/adapters')
+const useCases = {}
+
 let uut
 let sandbox
 // let ctx
@@ -22,8 +25,6 @@ describe('#Users-REST-Router', () => {
   // const testUser = {}
 
   beforeEach(() => {
-    const useCases = {}
-    const adapters = {}
     uut = new UserRouter({ adapters, useCases })
 
     sandbox = sinon.createSandbox()

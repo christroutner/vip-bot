@@ -1,8 +1,8 @@
-const User = require('../models/users')
+const User = require('../adapters/localdb/models/users')
 const config = require('../../config')
-const getToken = require('../lib/auth')
+const getToken = require('../adapters/auth')
 const jwt = require('jsonwebtoken')
-const wlogger = require('../lib/wlogger')
+const wlogger = require('../adapters/wlogger')
 
 let _this
 
