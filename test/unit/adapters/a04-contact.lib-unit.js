@@ -1,7 +1,7 @@
 const assert = require('chai').assert
 const sinon = require('sinon')
 
-const ContactLib = require('../../../src/lib/contact')
+const ContactLib = require('../../../src/adapters/contact')
 let uut
 let sandbox
 

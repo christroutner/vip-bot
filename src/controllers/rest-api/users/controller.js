@@ -1,16 +1,24 @@
 // User database model.
-const User = require('../../../models/users')
+// const User = require('../../../adapters/localdb/models/users')
 
 // User library for business logic.
-const UserLib = require('../../../lib/users')
+const UserLib = require('../../../adapters/users')
 
-const wlogger = require('../../../lib/wlogger')
+const wlogger = require('../../../adapters/wlogger')
 
 let _this
-class UserController {
-  constructor () {
+class UserRESTControllerLib {
+  constructor (localConfig = {}) {
     // Encapsulate dependencies
-    this.User = User
+    this.adapters = localConfig.adapters
+
+    if (!this.adapters) {
+      throw new Error(
+        'Instance of Adapters library required when instantiating /users REST Controller.'
+      )
+    }
+
+    this.UserModel = this.adapters.localdb.Users
     this.userLib = new UserLib()
 
     _this = this
@@ -273,4 +281,4 @@ class UserController {
   }
 }
 
-module.exports = UserController
+module.exports = UserRESTControllerLib

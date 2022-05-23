@@ -12,6 +12,9 @@ const LOCALHOST = `http://localhost:${config.port}`
 const context = {}
 
 const UserController = require('../../../src/controllers/rest-api/users/controller')
+const Adapters = require('../../../src/adapters')
+const adapters = new Adapters()
+
 let uut
 let sandbox
 
@@ -47,7 +50,7 @@ describe('Users', () => {
   })
 
   beforeEach(() => {
-    uut = new UserController()
+    uut = new UserController({ adapters })
 
     sandbox = sinon.createSandbox()
   })
