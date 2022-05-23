@@ -16,6 +16,7 @@ class RESTControllers {
   constructor (localConfig = {}) {
     // Dependency Injection.
     this.adapters = localConfig.adapters
+
     if (!this.adapters) {
       throw new Error(
         'Instance of Adapters library required when instantiating REST Controller libraries.'

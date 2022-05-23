@@ -13,11 +13,11 @@ const cors = require('kcors')
 // Local libraries
 const config = require('../config') // this first.
 
-const AdminLib = require('../src/lib/admin')
+const AdminLib = require('../src/adapters/admin')
 const adminLib = new AdminLib()
 
 const errorMiddleware = require('../src/middleware')
-const wlogger = require('../src/lib/wlogger')
+const wlogger = require('../src/adapters/wlogger')
 
 async function startServer () {
   // Create a Koa instance.

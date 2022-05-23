@@ -12,9 +12,9 @@
 'use strict'
 const axios = require('axios').default
 const mongoose = require('mongoose')
-const User = require('../models/users')
+const User = require('./localdb/models/users')
 const config = require('../../config')
-const JsonFiles = require('./utils/json-files')
+const JsonFiles = require('./json-files')
 const jsonFiles = new JsonFiles()
 
 const JSON_FILE = `system-user-${config.env}.json`

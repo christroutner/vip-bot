@@ -14,7 +14,7 @@ const config = require('../../../config')
 const testUtils = require('../../utils/test-utils')
 
 // Unit under test (uut)
-const UserLib = require('../../../src/lib/users')
+const UserLib = require('../../../src/adapters/users')
 
 describe('#users', () => {
   let uut

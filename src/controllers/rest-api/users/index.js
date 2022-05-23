@@ -11,6 +11,7 @@ class UserRouter {
   constructor (localConfig = {}) {
     // Dependency Injection.
     this.adapters = localConfig.adapters
+
     if (!this.adapters) {
       throw new Error(
         'Instance of Adapters library required when instantiating PostEntry REST Controller.'
@@ -27,7 +28,6 @@ class UserRouter {
       adapters: this.adapters,
       useCases: this.useCases
     }
-
     // Encapsulate dependencies.
     this.userRESTController = new UserRESTControllerLib(dependencies)
     this.validators = new Validators()
