@@ -10,7 +10,7 @@
 const assert = require('chai').assert
 const sinon = require('sinon')
 
-const BCHLib = require('../../src/lib/bch')
+const BCHLib = require('../../src/adapters/bch')
 let uut
 
 describe('#bch.js', () => {

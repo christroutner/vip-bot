@@ -6,7 +6,8 @@ const mongoose = require('mongoose')
 // process.env.KOA_ENV = 'test'
 const config = require('../../config')
 
-const User = require('../../src/models/users')
+const User = require('../../src/adapters/localdb/models/users')
+const TGUser = require('../../src/adapters/localdb/models/tg-user')
 
 async function deleteUsers () {
   // Connect to the Mongo Database.
@@ -24,6 +25,12 @@ async function deleteUsers () {
   // Delete each user.
   for (let i = 0; i < users.length; i++) {
     const thisUser = users[i]
+    await thisUser.remove()
+  }
+
+  const tgUsers = await TGUser.find({})
+  for (let i = 0; i < tgUsers.length; i++) {
+    const thisUser = tgUsers[i]
     await thisUser.remove()
   }
 

@@ -4,7 +4,7 @@
 */
 
 // Local libraries
-const Bot = require('../src/lib/bot')
+const Bot = require('../src/adapters/bot')
 
 // Instantiate the JWT handling library for FullStack.cash.
 const JwtLib = require('jwt-bch-lib')

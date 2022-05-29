@@ -6,7 +6,7 @@ const assert = require('chai').assert
 const sinon = require('sinon')
 const cloneDeep = require('lodash.clonedeep')
 
-const BotLib = require('../../src/lib/bot')
+const BotLib = require('../../src/adapters/bot')
 let uut
 
 const mockDataLib = require('./mocks/bot-mock')

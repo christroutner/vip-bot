@@ -6,7 +6,7 @@
 const TelegramBot = require('node-telegram-bot-api')
 
 // Local libraries
-const TGUser = require('../models/tg-user')
+const TGUser = require('./localdb/models/tg-user')
 const BCH = require('./bch')
 const wlogger = require('./wlogger')
 
