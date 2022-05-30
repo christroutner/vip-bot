@@ -10,8 +10,7 @@
 const Adapters = require('../adapters')
 
 // Load the Clean Architecture Use Case libraries.
-const UseCases = class {} // require('../use-cases')
-// const useCases = new UseCases({ adapters })
+const UseCases = require('../use-cases')
 
 // Load the REST API Controllers.
 const RESTControllers = require('./rest-api')

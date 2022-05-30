@@ -8,12 +8,9 @@ const sinon = require('sinon')
 const mongoose = require('mongoose')
 
 // Local support libraries
-const config = require('../../../../../config')
-const testUtils = require('../../../../utils/test-utils')
-const User = require('../../../../../src/adapters/localdb/models/users')
-
-const UserController = require('../../../../../src/controllers/rest-api/users/controller')
 const adapters = require('../../../mocks/adapters')
+const UserController = require('../../../../../src/controllers/rest-api/users/controller')
+const UseCasesMock = require('../../../mocks/use-cases')
 
 let uut
 let sandbox
@@ -22,48 +19,10 @@ let ctx
 const mockContext = require('../../../../unit/mocks/ctx-mock').context
 
 describe('Users', () => {
-  let testUser = {}
-
-  before(async () => {
-    // Connect to the Mongo Database.
-    mongoose.Promise = global.Promise
-    mongoose.set('useCreateIndex', true) // Stop deprecation warning.
-    await mongoose.connect(config.database, {
-      useUnifiedTopology: true,
-      useNewUrlParser: true
-    })
-
-    // Delete all previous users in the database.
-    await testUtils.deleteAllUsers()
-
-    // console.log(`config: ${JSON.stringify(config, null, 2)}`)
-
-    // Create a second test user.
-    // const userObj = {
-    //   email: 'test2@test.com',
-    //   password: 'pass2'
-    // }
-    // const testUser = await testUtils.createUser(userObj)
-    // console.log(`testUser2: ${JSON.stringify(testUser, null, 2)}`)
-
-    // context.user2 = testUser.user
-    // context.token2 = testUser.token
-    // context.id2 = testUser.user._id
-
-    // Get the JWT used to log in as the admin 'system' user.
-    // const adminJWT = await testUtils.getAdminJWT()
-    // // console.log(`adminJWT: ${adminJWT}`)
-    // context.adminJWT = adminJWT
-
-    // const admin = await testUtils.loginAdminUser()
-    // context.adminJWT = admin.token
-
-    // const admin = await adminLib.loginAdmin()
-    // console.log(`admin: ${JSON.stringify(admin, null, 2)}`)
-  })
-
   beforeEach(() => {
-    uut = new UserController({ adapters })
+    const useCases = new UseCasesMock()
+
+    uut = new UserController({ adapters, useCases })
 
     sandbox = sinon.createSandbox()
 
@@ -75,6 +34,34 @@ describe('Users', () => {
 
   after(() => {
     mongoose.connection.close()
+  })
+
+  describe('#constructor', () => {
+    it('should throw an error if adapters are not passed in', () => {
+      try {
+        uut = new UserController()
+
+        assert.fail('Unexpected code path')
+      } catch (err) {
+        assert.include(
+          err.message,
+          'Instance of Adapters library required when instantiating /users REST Controller.'
+        )
+      }
+    })
+
+    it('should throw an error if useCases are not passed in', () => {
+      try {
+        uut = new UserController({ adapters })
+
+        assert.fail('Unexpected code path')
+      } catch (err) {
+        assert.include(
+          err.message,
+          'Instance of Use Cases library required when instantiating /users REST Controller.'
+        )
+      }
+    })
   })
 
   describe('#POST /users', () => {
@@ -92,6 +79,7 @@ describe('Users', () => {
         }
       })
     })
+
     it('should return 422 status on biz logic error', async () => {
       try {
         await uut.createUser(ctx)
@@ -121,10 +109,6 @@ describe('Users', () => {
       // Assert that expected properties exist in the returned data.
       assert.property(ctx.response.body, 'user')
       assert.property(ctx.response.body, 'token')
-
-      // Used by downstream tests.
-      testUser = ctx.response.body.user
-      // console.log('testUser: ', testUser)
     })
   })
 
@@ -133,7 +117,7 @@ describe('Users', () => {
       try {
         // Force an error
         sandbox
-          .stub(uut.userLib, 'getAllUsers')
+          .stub(uut.useCases.user, 'getAllUsers')
           .rejects(new Error('test error'))
 
         await uut.getUsers(ctx)
@@ -160,7 +144,7 @@ describe('Users', () => {
     it('should return 422 status on arbitrary biz logic error', async () => {
       try {
         // Force an error
-        sandbox.stub(uut.userLib, 'getUser').rejects(new Error('test error'))
+        sandbox.stub(uut.useCases.user, 'getUser').rejects(new Error('test error'))
 
         await uut.getUser(ctx)
 
@@ -173,7 +157,7 @@ describe('Users', () => {
 
     it('should return 200 status on success', async () => {
       // Mock dependencies
-      sandbox.stub(uut.userLib, 'getUser').resolves({ _id: '123' })
+      sandbox.stub(uut.useCases.user, 'getUser').resolves({ _id: '123' })
 
       await uut.getUser(ctx)
 
@@ -189,7 +173,7 @@ describe('Users', () => {
         // Mock dependencies
         const testErr = new Error('test error')
         testErr.status = 404
-        sandbox.stub(uut.userLib, 'getUser').rejects(testErr)
+        sandbox.stub(uut.useCases.user, 'getUser').rejects(testErr)
 
         await uut.getUser(ctx)
 
@@ -215,20 +199,15 @@ describe('Users', () => {
     })
 
     it('should return 200 on success', async () => {
-      // Prep the testUser data.
-      // console.log('testUser: ', testUser)
-      testUser.password = 'password'
-      delete testUser.type
-
-      // Replace the testUser variable with an actual model from the DB.
-      const existingUser = await User.findById(testUser._id)
-
       ctx.body = {
-        user: existingUser
+        user: {}
       }
       ctx.request.body = {
-        user: testUser
+        user: {}
       }
+
+      // Mock dependencies
+      sandbox.stub(uut.useCases.user, 'updateUser').resolves({})
 
       await uut.updateUser(ctx)
 
@@ -254,8 +233,7 @@ describe('Users', () => {
     })
 
     it('should return 200 status on success', async () => {
-      // Replace the testUser variable with an actual model from the DB.
-      const existingUser = await User.findById(testUser._id)
+      const existingUser = {}
 
       ctx.body = {
         user: existingUser
@@ -283,6 +261,7 @@ describe('Users', () => {
       assert.isTrue(isEmail)
     })
   })
+
   describe('#handleError', () => {
     it('should still throw error if there is no message', () => {
       try {
@@ -295,6 +274,7 @@ describe('Users', () => {
         assert.include(err.message, 'Not Found')
       }
     })
+
     it('should  throw error ', () => {
       try {
         const err = {
