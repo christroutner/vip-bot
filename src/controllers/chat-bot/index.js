@@ -1,20 +1,34 @@
 /*
-
-  This library contains methods for working with the Telegram bot.
+  Controller library for the Telegram chat bot.
+  Messages comming in on the Telegram channel are handled by this library.
 */
 
 // Public npm libraries
 const TelegramBot = require('node-telegram-bot-api')
 
 // Local libraries
-const TGUser = require('./localdb/models/tg-user')
-const BCH = require('./bch')
-const wlogger = require('./wlogger')
+// const TGUser = require('./localdb/models/tg-user')
+// const BCH = require('./bch')
+// const wlogger = require('./wlogger')
 
 // let _this // Global variable for 'this' reference to the class instance.
 
 class Bot {
   constructor (localConfig = {}) {
+    // Dependency Injection.
+    this.adapters = localConfig.adapters
+    if (!this.adapters) {
+      throw new Error(
+        'Instance of Adapters library required when instantiating Telegram Bot Controller libraries.'
+      )
+    }
+    this.useCases = localConfig.useCases
+    if (!this.useCases) {
+      throw new Error(
+        'Instance of Use Cases library required when instantiating Telegram Bot Controller libraries.'
+      )
+    }
+
     // Retrieve the bot token.
     if (localConfig.token) {
       this.token = localConfig.token
@@ -46,8 +60,8 @@ class Bot {
     this.PSF_THRESHOLD = 30000
 
     // Encapsulate external dependencies.
-    this.TGUser = TGUser
-    this.bch = new BCH()
+    // this.TGUser = TGUser
+    // this.bch = new BCH()
     this.TelegramBot = TelegramBot
     this.bot = {}
 
@@ -89,10 +103,10 @@ class Bot {
   // - If the user of the message is not verified, delete their message.
   async processMsg (msg) {
     try {
-      wlogger.debug('processMsg: ', msg)
+      this.adapters.wlogger.debug('processMsg: ', msg)
     } catch (err) {
       const now = new Date()
-      wlogger.error(
+      this.adapters.wlogger.error(
         `Error in chat-bot.js/processMsg() at ${now.toLocaleString()}: `,
         err
       )

@@ -33,6 +33,7 @@
   "dependencies": {
     "@psf/bch-js": "6.4.1",
     "axios": "0.27.2",
+    "bch-message-lib": "2.2.0",
     "bcryptjs": "2.4.3",
     "glob": "7.1.6",
     "jsonwebtoken": "8.5.1",
