@@ -2,24 +2,30 @@
 // const User = require('../../../adapters/localdb/models/users')
 
 // User library for business logic.
-const UserLib = require('../../../adapters/users')
+// const UserLib = require('../../../adapters/users')
 
 const wlogger = require('../../../adapters/wlogger')
 
 let _this
 class UserRESTControllerLib {
   constructor (localConfig = {}) {
-    // Encapsulate dependencies
+    // Dependency injection.
     this.adapters = localConfig.adapters
-
     if (!this.adapters) {
       throw new Error(
         'Instance of Adapters library required when instantiating /users REST Controller.'
       )
     }
+    this.useCases = localConfig.useCases
+    if (!this.useCases) {
+      throw new Error(
+        'Instance of Use Cases library required when instantiating /users REST Controller.'
+      )
+    }
 
+    // Encapsulate dependencies
     this.UserModel = this.adapters.localdb.Users
-    this.userLib = new UserLib()
+    // this.userLib = new UserLib()
 
     _this = this
   }
@@ -67,7 +73,8 @@ class UserRESTControllerLib {
     try {
       const userObj = ctx.request.body.user
 
-      const { userData, token } = await _this.userLib.createUser(userObj)
+      // const { userData, token } = await _this.userLib.createUser(userObj)
+      const { userData, token } = await _this.useCases.user.createUser(userObj)
       // console.log('userData: ', userData)
       // console.log('token: ', token)
 
@@ -113,7 +120,8 @@ class UserRESTControllerLib {
    */
   async getUsers (ctx) {
     try {
-      const users = await _this.userLib.getAllUsers()
+      // const users = await _this.userLib.getAllUsers()
+      const users = await _this.useCases.user.getAllUsers()
 
       ctx.body = { users }
     } catch (err) {
@@ -152,7 +160,7 @@ class UserRESTControllerLib {
    */
   async getUser (ctx, next) {
     try {
-      const user = await _this.userLib.getUser(ctx.params)
+      const user = await _this.useCases.user.getUser(ctx.params)
 
       ctx.body = {
         user
@@ -211,7 +219,7 @@ class UserRESTControllerLib {
       const existingUser = ctx.body.user
       const newData = ctx.request.body.user
 
-      const user = await _this.userLib.updateUser(existingUser, newData)
+      const user = await _this.useCases.user.updateUser(existingUser, newData)
 
       ctx.body = {
         user
@@ -245,7 +253,7 @@ class UserRESTControllerLib {
       const user = ctx.body.user
 
       // await user.remove()
-      await _this.userLib.deleteUser(user)
+      await _this.useCases.user.deleteUser(user)
 
       ctx.status = 200
       ctx.body = {
