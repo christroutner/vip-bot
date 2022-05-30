@@ -1,12 +1,12 @@
 /*
   Unit tests for the bot.js library.
 */
-
+/*
 const assert = require('chai').assert
 const sinon = require('sinon')
 // const cloneDeep = require('lodash.clonedeep')
 
-const BotLib = require('../../../src/adapters/bot')
+const BotLib = require('../../../src/adapters/bot2')
 // const mockDataLib = require('../mocks/bot-mock')
 const FakeTelegramBot = require('../mocks/fake-telegram-bot')
 
@@ -511,3 +511,4 @@ describe('#bot.js', () => {
   //   })
   // })
 })
+*/

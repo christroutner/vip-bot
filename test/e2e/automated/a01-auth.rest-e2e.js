@@ -20,6 +20,9 @@ const context = {}
 
 const LOCALHOST = `http://localhost:${config.port}`
 
+process.env.BOTTELEGRAMTOKEN = 'test'
+process.env.CHATID = 1234
+
 describe('Auth', () => {
   before(async () => {
     // This should be the first instruction. It starts the REST API server.

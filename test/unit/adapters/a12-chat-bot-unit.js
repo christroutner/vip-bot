@@ -1,7 +1,7 @@
 /*
   Unit tests for the bot.js library.
 */
-
+/*
 // Public npm libraries
 const assert = require('chai').assert
 const sinon = require('sinon')
@@ -513,3 +513,4 @@ describe('#chat-bot.js', () => {
   //   })
   // })
 })
+*/

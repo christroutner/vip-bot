@@ -8,6 +8,9 @@ const sinon = require('sinon')
 
 const Controllers = require('../../../src/controllers')
 
+process.env.BOTTELEGRAMTOKEN = 'test'
+process.env.CHATID = 1234
+
 describe('#Controllers', () => {
   let uut
   let sandbox
