@@ -3,33 +3,35 @@
   functions are called by the /user REST API endpoints.
 */
 
-const UserModel = require('./localdb/models/users')
-const wlogger = require('./wlogger')
+const UserEntity = require('../entities/user')
+const wlogger = require('../adapters/wlogger')
 
 class UserLib {
-  constructor (configObj) {
+  constructor (localConfig = {}) {
+    // console.log('User localConfig: ', localConfig)
+    this.adapters = localConfig.adapters
+    if (!this.adapters) {
+      throw new Error(
+        'Instance of adapters must be passed in when instantiating User Use Cases library.'
+      )
+    }
+
     // Encapsulate dependencies
-    this.UserModel = UserModel
+    this.UserEntity = new UserEntity()
+    this.UserModel = this.adapters.localdb.Users
   }
 
   // Create a new user model and add it to the Mongo database.
   async createUser (userObj) {
     try {
       // Input Validation
-      if (!userObj.email || typeof userObj.email !== 'string') {
-        throw new Error("Property 'email' must be a string!")
-      }
-      if (!userObj.password || typeof userObj.password !== 'string') {
-        throw new Error("Property 'password' must be a string!")
-      }
-      if (!userObj.name || typeof userObj.name !== 'string') {
-        throw new Error("Property 'name' must be a string!")
-      }
 
-      const user = new this.UserModel(userObj)
+      const userEntity = this.UserEntity.validate(userObj)
+      const user = new this.UserModel(userEntity)
 
       // Enforce default value of 'user'
       user.type = 'user'
+      // console.log('user: ', user)
 
       // Save the new user model to the database.
       await user.save()
@@ -39,6 +41,7 @@ class UserLib {
 
       // Convert the database model to a JSON object.
       const userData = user.toJSON()
+      // console.log('userData: ', userData)
 
       // Delete the password property.
       delete userData.password
@@ -93,6 +96,9 @@ class UserLib {
 
   async updateUser (existingUser, newData) {
     try {
+      // console.log('existingUser: ', existingUser)
+      // console.log('newData: ', newData)
+
       // Input Validation
       // Optional inputs, but they must be strings if included.
       if (newData.email && typeof newData.email !== 'string') {
@@ -142,6 +148,34 @@ class UserLib {
       await user.remove()
     } catch (err) {
       wlogger.error('Error in lib/users.js/deleteUser()')
+      throw err
+    }
+  }
+
+  // Used to authenticate a user. If the login and password salt match a user in
+  // the database, then it returns the user model. The Koa REST API uses the
+  // Passport library for this functionality. This function is used to
+  // authenticate users who login via the JSON RPC.
+  async authUser (login, passwd) {
+    try {
+      // console.log('login: ', login)
+      // console.log('passwd: ', passwd)
+
+      const user = await this.UserModel.findOne({ email: login })
+      if (!user) {
+        throw new Error('User not found')
+      }
+
+      const isMatch = await user.validatePassword(passwd)
+
+      if (!isMatch) {
+        throw new Error('Login credential do not match')
+      }
+
+      return user
+    } catch (err) {
+      // console.error('Error in users.js/authUser()')
+      console.log('')
       throw err
     }
   }
