@@ -57,28 +57,21 @@ class UserLib {
   }
 
   // Get the model for a specific user.
-  async getUser (params) {
+  async getUser (id) {
     try {
-      const { id } = params
+      if (!id) throw new Error('id required when querying user.')
 
-      const user = await this.TGUserModel.findById(id)
+      const user = await this.TGUserModel.findOne({ tgId: id })
 
-      // Throw a 404 error if the user isn't found.
+      // Return null if user is not found (new user).
       if (!user) {
-        const err = new Error('User not found')
-        err.status = 404
-        throw err
+        return null
       }
 
       return user
     } catch (err) {
-      // console.log('Error in getUser: ', err)
+      console.log('Error in use-cases/tg-user.js/getUser()')
 
-      if (err.status === 404) throw err
-
-      // Return 422 for any other error
-      err.status = 422
-      err.message = 'Unprocessable Entity'
       throw err
     }
   }

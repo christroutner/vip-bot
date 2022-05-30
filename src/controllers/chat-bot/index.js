@@ -104,6 +104,35 @@ class Bot {
   async processMsg (msg) {
     try {
       _this.adapters.wlogger.debug('processMsg: ', msg)
+
+      // Query the tgUser model from the data.
+      const tgId = msg.from.id
+      const tgUser = await _this.useCases.tgUser.getUser(tgId)
+
+      // Create a new Telegram user model if it doesn't already exist.
+      if (!tgUser) {
+        const newUserData = {
+          username: msg.from.username,
+          tgId: msg.from.id
+        }
+
+        // Create a new telegram user model in the DB.
+        await _this.useCases.createUser(newUserData)
+
+        // Delete their message.
+        await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
+
+        // Exit function.
+        return 1 // Used for testing.
+      }
+
+      // Delete the users message if they haven't verified.
+      if (!tgUser.hasVerified) {
+        await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
+        return 2 // Used for testing.
+      }
+
+      // TODO: Check if user is still verified.
     } catch (err) {
       const now = new Date()
       _this.adapters.wlogger.error(
