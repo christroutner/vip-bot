@@ -17,6 +17,10 @@ let uut
 const useCases = {}
 const adapters = {}
 
+// Force-clear environment variables
+process.env.BOTTELEGRAMTOKEN = undefined
+process.env.CHATID = undefined
+
 describe('#chat-bot.js', () => {
   let sandbox
 
@@ -66,6 +70,9 @@ describe('#chat-bot.js', () => {
 
     it('should throw error if Telegram token is not specified', () => {
       try {
+        delete process.env.BOTTELEGRAMTOKEN
+        delete process.env.CHATID
+
         uut = new BotLib({ adapters, useCases })
 
         assert.fail('Unexpected result')

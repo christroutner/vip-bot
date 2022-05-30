@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "npm run test:all",
-    "test:all": "npm run test:unit && npm run test:e2e:auto",
+    "test:all": "export BOT_ENV=test && nyc --reporter=text mocha --exit --timeout 15000 --recursive test/unit test/e2e/automated/",
     "test:unit": "export BOT_ENV=test && mocha --exit --recursive --timeout 15000 test/unit/",
     "test:e2e:auto": "export BOT_ENV=test && mocha --exit --recursive --timeout 15000 test/e2e/automated/",
     "lint": "standard --env mocha --fix",
