@@ -9,6 +9,7 @@ const LocalDB = require('./localdb')
 const LogsAPI = require('./logapi')
 const Passport = require('./passport')
 const Nodemailer = require('./nodemailer')
+const wlogger = require('./wlogger')
 
 const JSONFiles = require('./json-files')
 
@@ -23,6 +24,7 @@ class Adapters {
     this.nodemailer = new Nodemailer()
     this.jsonFiles = new JSONFiles()
     this.config = config
+    this.wlogger = wlogger
   }
 }
 

@@ -49,7 +49,7 @@ class UserLib {
       return { userData, token }
     } catch (err) {
       // console.log('createUser() error: ', err)
-      wlogger.error('Error in lib/users.js/createUser()')
+      wlogger.error('Error in use-cases/user.js/createUser()')
       throw err
     }
   }
@@ -62,7 +62,7 @@ class UserLib {
 
       return users
     } catch (err) {
-      wlogger.error('Error in lib/users.js/getAllUsers()')
+      wlogger.error('Error in use-cases/user.js/getAllUsers()')
       throw err
     }
   }
@@ -138,7 +138,7 @@ class UserLib {
 
       return existingUser
     } catch (err) {
-      wlogger.error('Error in lib/users.js/updateUser()')
+      wlogger.error('Error in use-cases/user.js/updateUser()')
       throw err
     }
   }
@@ -147,7 +147,7 @@ class UserLib {
     try {
       await user.remove()
     } catch (err) {
-      wlogger.error('Error in lib/users.js/deleteUser()')
+      wlogger.error('Error in use-cases/user.js/deleteUser()')
       throw err
     }
   }
