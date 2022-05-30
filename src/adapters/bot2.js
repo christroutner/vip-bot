@@ -1,4 +1,6 @@
 /*
+  This library is in the process of being deprecated.
+
   This library contains methods for working with the Telegram bot.
 */
 
@@ -13,10 +15,10 @@ const wlogger = require('./wlogger')
 let _this // Global variable for 'this' reference to the class instance.
 
 class Bot {
-  constructor (config) {
+  constructor (localConfig = {}) {
     // Retrieve the bot token.
-    if (config && config.token) {
-      this.token = config.token
+    if (localConfig.token) {
+      this.token = localConfig.token
     } else if (process.env.BOTTELEGRAMTOKEN) {
       this.token = process.env.BOTTELEGRAMTOKEN
     }
@@ -27,8 +29,8 @@ class Bot {
     }
 
     // Retrieve the Chat ID of the Telegram room.
-    if (config && config.chatId) {
-      this.chatId = config.chatId
+    if (localConfig.chatId) {
+      this.chatId = localConfig.chatId
     } else if (process.env.CHATID) {
       this.chatId = process.env.CHATID
     }
@@ -47,20 +49,8 @@ class Bot {
     // Encapsulate external dependencies.
     this.TGUser = TGUser
     this.bch = new BCH()
-
-    // Created instance of TelegramBot
-    this.bot = new TelegramBot(this.token, {
-      polling: true
-    })
-
-    // Bot event hooks.
-    this.bot.on('message', this.processMsg)
-    this.bot.onText(/\/verify/, this.verifyUser)
-    this.bot.onText(/\/help/, this.help)
-    this.bot.onText(/\/start/, this.help)
-    this.bot.onText(/\/merit/, this.getMerit)
-    this.bot.onText(/\/revoke/, this.revoke)
-    this.bot.onText(/\/list/, this.list)
+    this.TelegramBot = TelegramBot
+    this.bot = {}
 
     // Used for debugging.
     // setInterval(function () {
@@ -72,6 +62,29 @@ class Bot {
     _this = this
   }
 
+  startBot () {
+    try {
+      // Created instance of TelegramBot
+      this.bot = new this.TelegramBot(this.token, {
+        polling: true
+      })
+
+      // Bot event hooks.
+      this.bot.on('message', this.processMsg)
+      this.bot.onText(/\/verify/, this.verifyUser)
+      this.bot.onText(/\/help/, this.help)
+      this.bot.onText(/\/start/, this.help)
+      this.bot.onText(/\/merit/, this.getMerit)
+      this.bot.onText(/\/revoke/, this.revoke)
+      this.bot.onText(/\/list/, this.list)
+
+      return true
+    } catch (err) {
+      console.error('Error in bot.js/startBot()')
+      throw err
+    }
+  }
+
   // Process general messages. The workflow of this method is as follows:
   // - If the user of the message is not in the database, create a new model.
   // - If the user of the message is not verified, delete their message.
@@ -81,7 +94,7 @@ class Bot {
       // console.log('processMsg: ', msg)
 
       // Query the tgUser model from the data.
-      const tgUser = await _this.TGUser.findOne({ tgId: msg.from.id })
+      const tgUser = await this.TGUser.findOne({ tgId: msg.from.id })
       // console.log('tgUser:', tgUser)
 
       // Create a new model if it doesn't already exist.
@@ -92,11 +105,11 @@ class Bot {
         }
 
         // Create a new telegram user model in the DB.
-        const newTgUser = new _this.TGUser(newUserData)
+        const newTgUser = new this.TGUser(newUserData)
         await newTgUser.save()
 
         // Delete their message.
-        await _this.bot.deleteMessage(_this.chatId, msg.message_id)
+        await this.bot.deleteMessage(this.chatId, msg.message_id)
 
         // TODO: Send greeting message.
 
@@ -106,7 +119,7 @@ class Bot {
 
       // Delete the users message if they haven't verified.
       if (!tgUser.hasVerified) {
-        await _this.bot.deleteMessage(_this.chatId, msg.message_id)
+        await this.bot.deleteMessage(this.chatId, msg.message_id)
         return 2 // Used for testing.
       }
 
@@ -116,17 +129,17 @@ class Bot {
       const nowNum = now.getTime()
       const lastVerifiedDate = new Date(tgUser.lastVerified)
       const timeDiff = nowNum - lastVerifiedDate.getTime()
-      if (timeDiff > _this.TWENTY_FOUR_HOURS) {
+      if (timeDiff > this.TWENTY_FOUR_HOURS) {
         wlogger.debug('More than 24 hours since user was verified.')
 
         // Update the merit.
-        tgUser.merit = await _this.bch.getMerit(tgUser.slpAddr)
+        tgUser.merit = await this.bch.getMerit(tgUser.slpAddr)
         wlogger.debug(
-          `merit: ${tgUser.merit}, threshold: ${_this.PSF_THRESHOLD}`
+          `merit: ${tgUser.merit}, threshold: ${this.PSF_THRESHOLD}`
         )
 
         // Merit meets the threshold.
-        if (tgUser.merit >= _this.PSF_THRESHOLD) {
+        if (tgUser.merit >= this.PSF_THRESHOLD) {
           wlogger.debug('User had their merit reverified.')
 
           // Mark the database model as having been verified.
@@ -144,10 +157,10 @@ class Bot {
             tgUser.merit
           }. Use the /verify command once your address has accrued enough merit.`
 
-          const botMsg = await _this.bot.sendMessage(_this.chatId, returnMsg)
+          const botMsg = await this.bot.sendMessage(this.chatId, returnMsg)
 
           // Delete bot spam after some time.
-          _this.deleteBotSpam(msg, botMsg)
+          this.deleteBotSpam(msg, botMsg)
         }
 
         // Save the user to the database.

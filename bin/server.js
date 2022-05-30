@@ -14,6 +14,7 @@ const cors = require('kcors')
 const config = require('../config') // this first.
 
 let tgBot
+console.log(`config.env: ${config.env}`)
 if (config.env !== 'test') {
   const TGBot = require('./tg-bot')
   tgBot = new TGBot()
