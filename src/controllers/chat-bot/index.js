@@ -11,7 +11,7 @@ const TelegramBot = require('node-telegram-bot-api')
 // const BCH = require('./bch')
 // const wlogger = require('./wlogger')
 
-// let _this // Global variable for 'this' reference to the class instance.
+let _this // Global variable for 'this' reference to the class instance.
 
 class Bot {
   constructor (localConfig = {}) {
@@ -72,7 +72,7 @@ class Bot {
     //   _this.bot.sendMessage(chatId, `Heartbeat: ${now.toLocaleString()}`)
     // }, 60000)
 
-    // _this = this
+    _this = this
   }
 
   startBot () {
@@ -103,11 +103,11 @@ class Bot {
   // - If the user of the message is not verified, delete their message.
   async processMsg (msg) {
     try {
-      this.adapters.wlogger.debug('processMsg: ', msg)
+      _this.adapters.wlogger.debug('processMsg: ', msg)
     } catch (err) {
       const now = new Date()
-      this.adapters.wlogger.error(
-        `Error in chat-bot.js/processMsg() at ${now.toLocaleString()}: `,
+      _this.adapters.wlogger.error(
+        `Error in constrollers/chat-bot/index.js/processMsg() at ${now.toLocaleString()}: `,
         err
       )
     }

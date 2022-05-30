@@ -15,10 +15,14 @@ const UseCases = require('../use-cases')
 // Load the REST API Controllers.
 const RESTControllers = require('./rest-api')
 
+const ChatBot = require('./chat-bot')
+
 class Controllers {
   constructor (localConfig = {}) {
+    // Encapsulate Dependencies
     this.adapters = new Adapters()
     this.useCases = new UseCases({ adapters: this.adapters })
+    this.bot = new ChatBot({ adapters: this.adapters, useCases: this.useCases })
   }
 
   // Top-level function for this library.

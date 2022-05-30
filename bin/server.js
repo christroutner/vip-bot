@@ -13,12 +13,12 @@ const cors = require('kcors')
 // Local libraries
 const config = require('../config') // this first.
 
-let tgBot
-console.log(`config.env: ${config.env}`)
-if (config.env !== 'test') {
-  const TGBot = require('./tg-bot')
-  tgBot = new TGBot()
-}
+// let tgBot
+// console.log(`config.env: ${config.env}`)
+// if (config.env !== 'test') {
+//   const TGBot = require('./tg-bot')
+//   tgBot = new TGBot()
+// }
 
 const AdminLib = require('../src/adapters/admin')
 const adminLib = new AdminLib()
@@ -64,6 +64,7 @@ async function startServer () {
   const Controllers = require('../src/controllers')
   const controllers = new Controllers()
   await controllers.attachRESTControllers(app)
+  controllers.bot.startBot()
 
   // Enable CORS for testing
   // THIS IS A SECURITY RISK. COMMENT OUT FOR PRODUCTION
@@ -81,10 +82,10 @@ async function startServer () {
   const success = await adminLib.createSystemUser()
   if (success) console.log('System admin user created.')
 
-  if (config.env !== 'test') {
-    const msg = await tgBot.start()
-    console.log(msg)
-  }
+  // if (config.env !== 'test') {
+  //   const msg = await tgBot.start()
+  //   console.log(msg)
+  // }
 
   return app
 }
