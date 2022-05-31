@@ -12,7 +12,7 @@
     "lint": "standard --env mocha --fix",
     "docs": "./node_modules/.bin/apidoc -i src/ -o docs",
     "coverage": "export BOT_ENV=test && npm run prep-test && nyc report --reporter=text-lcov | coveralls",
-    "coverage:report": "export BOT_ENV=test && npm run prep-test && nyc --reporter=html mocha --exit --timeout 15000 test/unit/",
+    "coverage:report": "export BOT_ENV=test && npm run prep-test && nyc --reporter=html mocha --recursive --exit --timeout 15000 test/unit/ test/e2e/automated/",
     "prep-test": "node util/users/delete-all-test-users.js"
   },
   "keywords": [

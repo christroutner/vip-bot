@@ -93,7 +93,7 @@ class Bot {
 
       return true
     } catch (err) {
-      console.error('Error in bot.js/startBot()')
+      console.error('Error in controllers/chat-bot/index.js/startBot()')
       throw err
     }
   }
@@ -134,11 +134,14 @@ class Bot {
 
       // TODO: Check if user is still verified.
     } catch (err) {
+      // console.log('err: ', err)
       const now = new Date()
       _this.adapters.wlogger.error(
         `Error in constrollers/chat-bot/index.js/processMsg() at ${now.toLocaleString()}: `,
         err
       )
+
+      return false
     }
   }
 }
