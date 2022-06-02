@@ -51,7 +51,7 @@ class VerifyCommand {
     let retVal = 0 // Default return value.
 
     try {
-      _this.adapters.wlogger.debug('verifyUser: ', msg)
+      // _this.adapters.wlogger.debug('verifyUser: ', msg)
 
       // Default return message.
       let returnMsg = `@${
@@ -60,7 +60,7 @@ class VerifyCommand {
 
       // Convert the message into an array of parts.
       const msgParts = msg.text.toString().split(' ')
-      console.log(`msgParts: ${JSON.stringify(msgParts, null, 2)}`)
+      // console.log(`msgParts: ${JSON.stringify(msgParts, null, 2)}`)
 
       // If the message does not have 3 parts, ignore it.
       if (msgParts.length === 3) {
@@ -138,12 +138,12 @@ class VerifyCommand {
           // await tgUser.save()
           await _this.useCases.tgUser.updateUser(tgUser, tgUser)
         }
+
+        const botMsg = await _this.bot.sendMessage(msg.chat.id, returnMsg)
+
+        // Delete bot spam after some time.
+        _this.util.deleteBotSpam(msg, botMsg)
       }
-
-      const botMsg = await _this.bot.sendMessage(msg.chat.id, returnMsg)
-
-      // Delete bot spam after some time.
-      _this.util.deleteBotSpam(msg, botMsg)
 
       return retVal
     } catch (err) {

@@ -20,6 +20,13 @@ class HelpCommand {
 
   async process (msg) {
     try {
+      // Convert the message into an array of parts.
+      const msgParts = msg.text.toString().split(' ')
+      // console.log(`msgParts: ${JSON.stringify(msgParts, null, 2)}`)
+
+      // Ignore if there are any additional words in the command.
+      if (msgParts.length !== 1) return
+
       const outMsg = `
   The bot manages the VIP room for the PSF. Only users who have verified they own PSF tokens with the required Merit are allowed to speak in the VIP room.
 

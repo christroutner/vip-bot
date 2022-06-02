@@ -116,7 +116,7 @@ class Bot {
   // - If the user of the message is not verified, delete their message.
   async processMsg (msg) {
     try {
-      _this.adapters.wlogger.debug('processMsg: ', msg)
+      // _this.adapters.wlogger.debug('processMsg: ', msg)
 
       // Query the tgUser model from the data.
       const tgId = msg.from.id
