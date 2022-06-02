@@ -1,3 +1,6 @@
+// This file should be deleted once all functionality has been ported to the new
+// Clean Architecture structure.
+
 /*
   This library is in the process of being deprecated.
 
