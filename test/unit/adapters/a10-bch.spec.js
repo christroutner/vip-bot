@@ -6,15 +6,16 @@
   simpleledger:qzqeya7lnafh29mggjjnc3hg2hlch4f06y563rrs44
   1Cp7dYG4Q8YVxwMM2gh9EKr9bwcQ5X1R1E
 */
-/*
+
+// Global npm libraries
 const assert = require('chai').assert
 const sinon = require('sinon')
 
+// Local libraries
 const BCHLib = require('../../../src/adapters/bch')
-let uut
 
 describe('#bch.js', () => {
-  let sandbox
+  let sandbox, uut
 
   beforeEach(() => {
     uut = new BCHLib()
@@ -74,7 +75,7 @@ describe('#bch.js', () => {
   describe('#getMerit', () => {
     it('should get the merit for an address', async () => {
       // Mock to prevent live network calls.
-      sandbox.stub(uut.bchMsg.merit, 'agMerit').resolves(50)
+      sandbox.stub(uut.bchMerit.merit, 'agMerit').resolves(50)
 
       const bchAddr = 'bitcoincash:qpwdyj5adnzf2cruyr5c3lzrlec9hqphzqyzpn0tdf'
 
@@ -87,7 +88,7 @@ describe('#bch.js', () => {
       try {
         // Force an error
         sandbox
-          .stub(uut.bchMsg.merit, 'agMerit')
+          .stub(uut.bchMerit.merit, 'agMerit')
           .throws(new Error('test error'))
 
         const bchAddr = 'bitcoincash:qpwdyj5adnzf2cruyr5c3lzrlec9hqphzqyzpn0tdf'
@@ -101,5 +102,3 @@ describe('#bch.js', () => {
     })
   })
 })
-
-*/

@@ -10,10 +10,9 @@ const LogsAPI = require('./logapi')
 const Passport = require('./passport')
 const Nodemailer = require('./nodemailer')
 const wlogger = require('./wlogger')
-
 const JSONFiles = require('./json-files')
-
 const config = require('../../config')
+const Bch = require('./bch')
 
 class Adapters {
   constructor (localConfig = {}) {
@@ -25,6 +24,7 @@ class Adapters {
     this.jsonFiles = new JSONFiles()
     this.config = config
     this.wlogger = wlogger
+    this.bch = new Bch()
   }
 }
 
