@@ -11,5 +11,7 @@ module.exports = {
   emailPassword: process.env.EMAILPASS ? process.env.EMAILPASS : 'emailpassword',
 
   // Using constants here so they can be manipulated in tests.
-  meritThreshold: 30000
+  meritThreshold: 30000,
+
+  restURL: process.env.REST_URL ? process.env.REST_URL : 'https://api.fullstack.cash/v5/'
 }

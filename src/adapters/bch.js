@@ -6,12 +6,19 @@
 const BchMerit = require('bch-merit-lib/index')
 const BchWallet = require('minimal-slp-wallet/index')
 
+// Local libraries
+const config = require('../../config')
+
 const PSF_TOKEN_ID = '38e97c5d7d3585a2cbf3f9580c82ca33985f9cb0845d4dcce220cb709f9538b0'
 
 class Bch {
   constructor (localConfig = {}) {
     // Encapsulate dependencies
-    this.wallet = new BchWallet(undefined, { noUpdate: true, interface: 'rest-api' })
+    this.wallet = new BchWallet(undefined, {
+      noUpdate: true,
+      interface: 'rest-api',
+      restURL: config.restURL
+    })
     this.bchjs = this.wallet.bchjs
     this.bchMerit = new BchMerit({ wallet: this.wallet })
   }
