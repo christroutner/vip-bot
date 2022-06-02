@@ -1,8 +1,8 @@
-const User = require('../models/users')
+const User = require('../adapters/localdb/models/users')
 const config = require('../../config')
-const getToken = require('../lib/auth')
+const getToken = require('../adapters/auth')
 const jwt = require('jsonwebtoken')
-const wlogger = require('../lib/wlogger')
+const wlogger = require('../adapters/wlogger')
 
 let _this
 
@@ -42,7 +42,7 @@ class Validators {
         ctx.throw(401)
       }
 
-      return next()
+      return true
     } catch (error) {
       ctx.throw(401)
     }
@@ -80,7 +80,7 @@ class Validators {
         ctx.throw(401, 'not admin')
       }
 
-      return next()
+      return true
     } catch (error) {
       ctx.throw(401, error.message)
     }
@@ -120,15 +120,16 @@ class Validators {
         // console.log(`Err: Could not find user.`)
         ctx.throw(401)
       }
+      // console.log('ctx.state.user: ', ctx.state.user)
 
       // console.log(`ctx.state.user: ${JSON.stringify(ctx.state.user, null, 2)}`)
       // Ensure the calling user and the target user are the same.
 
       if (ctx.state.user._id.toString() !== targetId.toString()) {
         wlogger.verbose(
-      `Calling user and target user do not match! Calling user: ${
-        ctx.state.user._id
-      }, Target user: ${targetId}`
+          `Calling user and target user do not match! Calling user: ${
+            ctx.state.user._id
+          }, Target user: ${targetId}`
         )
 
         // If they don't match, then the calling user better be an admin.
@@ -139,7 +140,7 @@ class Validators {
         }
       }
 
-      return next()
+      return true
     } catch (error) {
       ctx.throw(401, error.message)
     }

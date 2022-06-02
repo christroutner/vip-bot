@@ -13,17 +13,18 @@ const cors = require('kcors')
 // Local libraries
 const config = require('../config') // this first.
 
-let tgBot
-if (config.env !== 'test') {
-  const TGBot = require('./tg-bot')
-  tgBot = new TGBot()
-}
+// let tgBot
+// console.log(`config.env: ${config.env}`)
+// if (config.env !== 'test') {
+//   const TGBot = require('./tg-bot')
+//   tgBot = new TGBot()
+// }
 
-const AdminLib = require('../src/lib/admin')
+const AdminLib = require('../src/adapters/admin')
 const adminLib = new AdminLib()
 
 const errorMiddleware = require('../src/middleware')
-const wlogger = require('../src/lib/wlogger')
+const wlogger = require('../src/adapters/wlogger')
 
 async function startServer () {
   // Create a Koa instance.
@@ -59,9 +60,11 @@ async function startServer () {
   app.use(passport.initialize())
   app.use(passport.session())
 
-  // Custom Middleware Modules
-  const modules = require('../src/modules')
-  modules(app)
+  // Attach REST API and JSON RPC controllers to the app.
+  const Controllers = require('../src/controllers')
+  const controllers = new Controllers()
+  await controllers.attachRESTControllers(app)
+  controllers.bot.startBot()
 
   // Enable CORS for testing
   // THIS IS A SECURITY RISK. COMMENT OUT FOR PRODUCTION
@@ -79,10 +82,10 @@ async function startServer () {
   const success = await adminLib.createSystemUser()
   if (success) console.log('System admin user created.')
 
-  if (config.env !== 'test') {
-    const msg = await tgBot.start()
-    console.log(msg)
-  }
+  // if (config.env !== 'test') {
+  //   const msg = await tgBot.start()
+  //   console.log(msg)
+  // }
 
   return app
 }
