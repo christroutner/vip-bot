@@ -11,6 +11,7 @@ const TelegramBot = require('node-telegram-bot-api')
 // const BCH = require('./bch')
 // const wlogger = require('./wlogger')
 const HelpCommand = require('./commands/help')
+const VerifyCommand = require('./commands/verify')
 
 let _this // Global variable for 'this' reference to the class instance.
 
@@ -83,13 +84,22 @@ class Bot {
         polling: true
       })
 
-      this.help = new HelpCommand({ bot: this.bot })
+      // Prepare dependencies for injection.
+      const dependencies = {
+        adapters: this.adapters,
+        useCases: this.useCases,
+        bot: this.bot
+      }
+
+      // Instantiate the command handlers.
+      this.help = new HelpCommand(dependencies)
+      this.verify = new VerifyCommand(dependencies)
 
       // Bot event hooks.
       this.bot.on('message', this.processMsg)
-      // this.bot.onText(/\/verify/, this.verifyUser)
       this.bot.onText(/\/help/, this.help.process)
       this.bot.onText(/\/start/, this.help.process)
+      this.bot.onText(/\/verify/, this.verify.process)
       // this.bot.onText(/\/merit/, this.getMerit)
       // this.bot.onText(/\/revoke/, this.revoke)
       // this.bot.onText(/\/list/, this.list)

@@ -21,6 +21,9 @@ const adapters = {
   wlogger: {
     debug: () => {},
     error: () => {}
+  },
+  config: {
+    meritThreshold: 30000
   }
 }
 
