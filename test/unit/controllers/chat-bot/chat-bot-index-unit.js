@@ -160,7 +160,7 @@ describe('#chat-bot.js', () => {
       }
 
       // Mock dependencies
-      uut.useCases.createUser = () => {}
+      uut.useCases.tgUser.createUser = () => {}
       uut.bot = new FakeTelegramBot()
 
       const result = await uut.processMsg(msg)
