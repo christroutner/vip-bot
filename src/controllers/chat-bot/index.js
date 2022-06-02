@@ -10,6 +10,7 @@ const TelegramBot = require('node-telegram-bot-api')
 // const TGUser = require('./localdb/models/tg-user')
 // const BCH = require('./bch')
 // const wlogger = require('./wlogger')
+const HelpCommand = require('./commands/help')
 
 let _this // Global variable for 'this' reference to the class instance.
 
@@ -82,11 +83,13 @@ class Bot {
         polling: true
       })
 
+      this.help = new HelpCommand({ bot: this.bot })
+
       // Bot event hooks.
       this.bot.on('message', this.processMsg)
       // this.bot.onText(/\/verify/, this.verifyUser)
-      // this.bot.onText(/\/help/, this.help)
-      // this.bot.onText(/\/start/, this.help)
+      this.bot.onText(/\/help/, this.help.process)
+      this.bot.onText(/\/start/, this.help.process)
       // this.bot.onText(/\/merit/, this.getMerit)
       // this.bot.onText(/\/revoke/, this.revoke)
       // this.bot.onText(/\/list/, this.list)
