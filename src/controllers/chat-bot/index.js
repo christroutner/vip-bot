@@ -130,7 +130,7 @@ class Bot {
         }
 
         // Create a new telegram user model in the DB.
-        await _this.useCases.createUser(newUserData)
+        await _this.useCases.tgUser.createUser(newUserData)
 
         // Delete their message.
         await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
