@@ -21,6 +21,16 @@ class Controllers {
     this.useCases = new UseCases({ adapters: this.adapters })
   }
 
+  // Spin up any adapter libraries that have async startup needs.
+  async initAdapters () {
+    await this.adapters.startAdapters()
+  }
+
+  // Run any Use Cases to startup the app.
+  async initUseCases () {
+    await this.useCases.startUseCases()
+  }
+
   // Top-level function for this library.
   // Start the various Controllers and attach them to the app.
   attachRESTControllers (app) {
