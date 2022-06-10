@@ -53,6 +53,8 @@ async function startServer () {
   // Attach REST API and JSON RPC controllers to the app.
   const Controllers = require('../src/controllers')
   const controllers = new Controllers()
+  await controllers.initAdapters()
+  await controllers.initUseCases()
   await controllers.attachRESTControllers(app)
 
   // Enable CORS for testing

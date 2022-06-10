@@ -26,6 +26,16 @@ class Adapters {
     this.config = config
     this.wlogger = wlogger
   }
+
+  // Startup any asynchronous processes needed to initialize the adapter libraries.
+  async startAdapters () {
+    try {
+      console.log('Async Adapters have been started.')
+    } catch (err) {
+      console.error('Error in adapters/index.js/startAdapters()')
+      throw err
+    }
+  }
 }
 
 module.exports = Adapters
