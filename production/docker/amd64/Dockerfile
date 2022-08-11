@@ -3,20 +3,31 @@
 
 #IMAGE BUILD COMMANDS
 # ct-base-ubuntu = ubuntu 18.04 + nodejs v10 LTS
-FROM christroutner/ct-base-ubuntu
+#FROM christroutner/ct-base-ubuntu
+FROM ubuntu:20.04
 MAINTAINER Chris Troutner <chris.troutner@gmail.com>
 
+#Update the OS and install any OS packages needed.
+RUN apt-get update
+RUN apt-get install -y sudo git curl nano gnupg wget
+
+#Install Node and NPM
+RUN curl -sL https://deb.nodesource.com/setup_16.x -o nodesource_setup.sh
+RUN bash nodesource_setup.sh
+RUN apt-get install -y nodejs build-essential
+
+
 #Create the user 'safeuser' and add them to the sudo group.
-#RUN useradd -ms /bin/bash safeuser
-#RUN adduser safeuser sudo
+RUN useradd -ms /bin/bash safeuser
+RUN adduser safeuser sudo
 
 #Set password to 'password' change value below if you want a different password
-#RUN echo safeuser:password | chpasswd
+RUN echo safeuser:abcd8765 | chpasswd
 
 #Set the working directory to be the home directory
 WORKDIR /home/safeuser
 
-#Setup NPM for non-root global install
+#Setup NPM for non-root global install (like on a mac)
 #RUN mkdir /home/safeuser/.npm-global
 #RUN chown -R safeuser .npm-global
 #RUN echo "export PATH=~/.npm-global/bin:$PATH" >> /home/safeuser/.profile
@@ -52,7 +63,7 @@ VOLUME /home/safeuser/keys
 EXPOSE 5001
 
 # Start the application.
-COPY start-production start-production
-CMD ["./start-production"]
+#COPY start-production.sh start-production.sh
+CMD ["./start-production.sh"]
 
 #CMD ["npm", "start"]
