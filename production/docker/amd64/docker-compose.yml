@@ -4,10 +4,10 @@ version: '3.9'
 
 services:
   mongo-koa-service:
-    image: mongo:4.4.2-bionic
-    container_name: mongo-p2wdb-service
+    image: mongo:4.2.0
+    container_name: mongo-koa-service
     ports:
-      - '5666:27017' # <host port>:<container port>
+      - '5555:27017' # <host port>:<container port>
     volumes:
       - ../data/database:/data/db
     command: mongod --logpath=/dev/null # -- quiet
@@ -28,12 +28,11 @@ services:
         max-file: '10'
     mem_limit: 1000mb
     links:
-      - mongo-p2wdb-service
-      - p2wdb
+      - mongo-koa-service
     ports:
       - '5700:5700' # <host port>:<container port>
     volumes:
       #- ../scripts/wallet.json:/home/safeuser/bch-dex/wallet.json
       #- ./bch-dex/start-production.sh:/home/safeuser/bch-dex/start-production.sh
-      - ./start-production:/home/safeuser/start-production.sh
+      - ./start-production.sh:/home/safeuser/koa/start-production.sh
     restart: always
