@@ -32,22 +32,19 @@ class HelpCommand {
 
   To verify your merit, follow these steps:
 
-  1) Go to https://message.fullstack.cash and create a wallet.
+  1) Purchase PSF tokens at https://PSFoundation.cash or earn them by completing programming tasks (bounties can be found here: https://github.com/Permissionless-Software-Foundation/bounties). You can use wallet.fullstack.cash to manage your PSF tokens.
 
-  2) Use the 'Sign Message' area of the app to sign a the word 'verify'
+  2) Get the WIF private key holding your PSF tokens. We recommend holding your PSF tokens on a paper wallet, which can be generated at https://paperwallet.psfoundation.info. A WIF private key starts with the letter 'K' or 'L'.
 
-  3) Use the /verify command to verify your wallet address, like this:
+  3) Sign a message to verify that you own the address holding those PSF tokens. This can be done at https://sign.psfoundation.info. Sign the word 'verify'.
+
+  4) Use the /verify command to verify your wallet address, like this:
     /verify <your BCH address> <The signed message>
-
-  4) Purchase PSF tokens at https://PSFoundation.cash or earn them by completing programming tasks (bounties can be found here: https://github.com/Permissionless-Software-Foundation/bounties). Send these tokens to your wallet address.
 
   Your 'Merit' is calculated this way:
   Merit = token quantity X token age (in days)
 
   If you obtain fewer tokens, it will take more time to aquire the required merit. If you obtain more, it takes less time.
-
-  A video walkthrough of how to join the VIP room, as well as how to use other PSF communication channels can be found here:
-  https://youtu.be/KOlM4dU6Gj0
 
   If you need help, ask for guidence on @permissionless_software
 

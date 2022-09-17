@@ -338,9 +338,9 @@ The bot manages the VIP room for the PSF. Only users who have verified they own 
 
 To verify your merit, follow these steps:
 
-1) Go to https://message.fullstack.cash and create a wallet.
+1) Get the WIF private key holding your PSF tokens. We recommend holding your PSF tokens on a paper wallet, which can be generated at https://paperwallet.psfoundation.info. A WIF private key starts with the letter 'K' or 'L'.
 
-2) Use the 'Sign Message' area of the app to sign a the word 'verify'
+2) Sign a message to verify that you own the address holding those PSF tokens. This can be done at https://sign.psfoundation.info. Sign the word 'verify'.
 
 3) Use the /verify command to verify your wallet address, like this:
   /verify <your BCH address> <The signed message>
