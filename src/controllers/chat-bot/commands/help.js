@@ -32,9 +32,9 @@ class HelpCommand {
 
   To verify your merit, follow these steps:
 
-  1) Purchase PSF tokens at https://PSFoundation.cash or earn them by completing programming tasks (bounties can be found here: https://github.com/Permissionless-Software-Foundation/bounties). You can use wallet.fullstack.cash to manage your PSF tokens.
+  1) Purchase PSF tokens at https://PSFoundation.cash or earn them by completing programming tasks (ask about bounties here: @permissionless_software). You can use wallet.fullstack.cash to manage your PSF tokens.
 
-  2) Get the WIF private key holding your PSF tokens. We recommend holding your PSF tokens on a paper wallet, which can be generated at https://paperwallet.psfoundation.info. A WIF private key starts with the letter 'K' or 'L'.
+  2) Get the WIF private key storing your PSF tokens. We recommend holding your PSF tokens on a paper wallet, which can be generated at https://paperwallet.psfoundation.info. A WIF private key starts with the letter 'K' or 'L'.
 
   3) Sign a message to verify that you own the address holding those PSF tokens. This can be done at https://sign.psfoundation.info. Sign the word 'verify'.
 
@@ -55,15 +55,6 @@ class HelpCommand {
 
     /verify <BCH address> <signed message>
       - Verify that you own the Bitcoin Cash address by signing a message. The bot will track the merit associated with this address.
-
-    /revoke <BCH address>
-      - Revoke ownership of a BCH address.
-
-    /merit @username
-      - Query the merit for a user in this channel.
-
-    /list
-      - List all the people in the channel that have enough merit to speak.
   `
 
       const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
