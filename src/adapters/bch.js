@@ -4,7 +4,7 @@
 
 // Public npm libraries
 const BchMerit = require('bch-merit-lib/index')
-const BchWallet = require('minimal-slp-wallet/index')
+const BchWallet = require('minimal-slp-wallet')
 
 // Local libraries
 const config = require('../../config')
@@ -21,6 +21,7 @@ class Bch {
     })
     this.bchjs = this.wallet.bchjs
     this.bchMerit = new BchMerit({ wallet: this.wallet })
+    this.config = config
   }
 
   // Verify that the signed message 'verify' was signed by a specific BCH address.
@@ -55,6 +56,24 @@ class Bch {
       return merit
     } catch (err) {
       console.error('Error in bch.js/getMerit()')
+      throw err
+    }
+  }
+
+  // Used as a replacement for getMerit. It checks to see if the address contains
+  // a specific token.
+  async hasToken (addr) {
+    try {
+      const tokens = await this.wallet.listTokens(addr)
+      console.log('tokens: ', tokens)
+
+      const targetToken = tokens.map(x => x.tokenId === this.config.tokenId)
+
+      if (targetToken.length) return 40000
+
+      return 0
+    } catch (err) {
+      console.error('Error in bch.js/hasToken()')
       throw err
     }
   }

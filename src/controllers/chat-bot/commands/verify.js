@@ -108,7 +108,10 @@ class VerifyCommand {
           tgUser.slpAddr = _this.adapters.bch.bchjs.SLP.Address.toSLPAddress(
             tgUser.bchAddr
           )
-          tgUser.merit = await _this.adapters.bch.getMerit(tgUser.slpAddr)
+          // tgUser.merit = await _this.adapters.bch.getMerit(tgUser.slpAddr)
+          tgUser.merit = await _this.adapters.bch.hasToken(tgUser.bchAddr)
+          console.log('tgUser.merit: ', tgUser.merit)
+
           const now = new Date()
           tgUser.lastVerified = now.toISOString()
 

@@ -1,7 +1,7 @@
 {
   "name": "vip-bot",
   "version": "1.0.0",
-  "description": "A Telegram bot for a VIP room using SLP tokens",
+  "description": "A Telegram bot only allowing people to speak if they posses a specific SLP token",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -48,7 +48,7 @@
     "koa-static": "5.0.0",
     "line-reader": "0.4.0",
     "lodash.clonedeep": "4.5.0",
-    "minimal-slp-wallet": "5.1.0",
+    "minimal-slp-wallet": "5.5.1",
     "mongoose": "5.13.14",
     "node-telegram-bot-api": "0.57.0",
     "nodemailer": "6.7.5",

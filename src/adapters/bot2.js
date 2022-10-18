@@ -257,7 +257,10 @@ class Bot {
           tgUser.slpAddr = _this.bch.bchjs.SLP.Address.toSLPAddress(
             tgUser.bchAddr
           )
-          tgUser.merit = await _this.bch.getMerit(tgUser.slpAddr)
+          // tgUser.merit = await _this.bch.getMerit(tgUser.slpAddr)
+          tgUser.merit = await _this.bch.hasToken(tgUser.bchAddr)
+          console.log('tgUser.merit: ', tgUser.merit)
+
           const now = new Date()
           tgUser.lastVerified = now.toISOString()
 
