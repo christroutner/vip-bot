@@ -14,7 +14,7 @@ const PSF_TOKEN_ID = '38e97c5d7d3585a2cbf3f9580c82ca33985f9cb0845d4dcce220cb709f
 class Bch {
   constructor (localConfig = {}) {
     // Encapsulate dependencies
-    this.wallet = new BchWallet(undefined, {
+    this.wallet = new BchWallet(config.mnemonic, {
       noUpdate: true,
       interface: 'rest-api',
       restURL: config.restURL
@@ -74,6 +74,26 @@ class Bch {
       return 0
     } catch (err) {
       console.error('Error in bch.js/hasToken()')
+      throw err
+    }
+  }
+
+  // Sends a Telegram token to the given address.
+  async sendToken (addr) {
+    try {
+      await this.wallet.initialize()
+
+      const reciever = {
+        address: addr,
+        tokenId: this.config.tokenId,
+        qty: 1
+      }
+
+      const txid = await this.wallet.sendTokens(reciever, 3)
+
+      return txid
+    } catch (err) {
+      console.error('Error in bch.js/sendToken()')
       throw err
     }
   }

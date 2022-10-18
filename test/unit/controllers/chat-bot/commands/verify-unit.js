@@ -155,35 +155,35 @@ describe('#commands-util', () => {
       assert.equal(result, 1)
     })
 
-    it('should notify if address does not meet threshold', async () => {
-      // Mock to force the code path for this test.
-      sandbox.stub(uut.bot, 'sendMessage').resolves()
-      sandbox.stub(uut.util, 'deleteBotSpam').resolves()
-      sandbox.stub(uut.adapters.bch, 'verifyMsg').returns(true)
-      sandbox.stub(uut.useCases.tgUser, 'getUser').resolves(mockData.mockUnverifiedUser)
-      sandbox.stub(uut, 'checkDupClaim').resolves(false)
-      // Force merit to be below threshold
-      sandbox.stub(uut.adapters.bch, 'getMerit').resolves(0.1)
+    // it('should notify if address does not meet threshold', async () => {
+    //   // Mock to force the code path for this test.
+    //   sandbox.stub(uut.bot, 'sendMessage').resolves()
+    //   sandbox.stub(uut.util, 'deleteBotSpam').resolves()
+    //   sandbox.stub(uut.adapters.bch, 'verifyMsg').returns(true)
+    //   sandbox.stub(uut.useCases.tgUser, 'getUser').resolves(mockData.mockUnverifiedUser)
+    //   sandbox.stub(uut, 'checkDupClaim').resolves(false)
+    //   // Force merit to be below threshold
+    //   sandbox.stub(uut.adapters.bch, 'getMerit').resolves(0.1)
+    //
+    //   const result = await uut.process(mockData.validVerifyMsg)
+    //
+    //   assert.equal(result, 3)
+    // })
 
-      const result = await uut.process(mockData.validVerifyMsg)
-
-      assert.equal(result, 3)
-    })
-
-    it('should send success message if threshold is met', async () => {
-      // Mock to force the code path for this test.
-      sandbox.stub(uut.bot, 'sendMessage').resolves()
-      sandbox.stub(uut.util, 'deleteBotSpam').resolves()
-      sandbox.stub(uut.adapters.bch, 'verifyMsg').returns(true)
-      sandbox.stub(uut.useCases.tgUser, 'getUser').resolves(mockData.mockUnverifiedUser)
-      sandbox.stub(uut, 'checkDupClaim').resolves(false)
-      // Force merit to be below threshold
-      sandbox.stub(uut.adapters.bch, 'getMerit').resolves(35000)
-
-      const result = await uut.process(mockData.validVerifyMsg)
-
-      assert.equal(result, 2)
-    })
+    // it('should send success message if threshold is met', async () => {
+    //   // Mock to force the code path for this test.
+    //   sandbox.stub(uut.bot, 'sendMessage').resolves()
+    //   sandbox.stub(uut.util, 'deleteBotSpam').resolves()
+    //   sandbox.stub(uut.adapters.bch, 'verifyMsg').returns(true)
+    //   sandbox.stub(uut.useCases.tgUser, 'getUser').resolves(mockData.mockUnverifiedUser)
+    //   sandbox.stub(uut, 'checkDupClaim').resolves(false)
+    //   // Force merit to be below threshold
+    //   sandbox.stub(uut.adapters.bch, 'getMerit').resolves(35000)
+    //
+    //   const result = await uut.process(mockData.validVerifyMsg)
+    //
+    //   assert.equal(result, 2)
+    // })
 
     it('should catch and report errors', async () => {
       // Force an error

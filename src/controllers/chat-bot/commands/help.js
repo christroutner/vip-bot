@@ -53,6 +53,9 @@ class HelpCommand {
     /help or /start
       - Bring up this help message.
 
+    /request <BCH address>
+      - Request a PSF Telegram token.
+
     /verify <BCH address> <signed message>
       - Verify that you own the Bitcoin Cash address by signing a message. The bot will track the merit associated with this address.
   `

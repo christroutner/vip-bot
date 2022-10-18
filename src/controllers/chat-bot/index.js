@@ -12,6 +12,7 @@ const TelegramBot = require('node-telegram-bot-api')
 // const wlogger = require('./wlogger')
 const HelpCommand = require('./commands/help')
 const VerifyCommand = require('./commands/verify')
+const RequestCommand = require('./commands/request')
 
 let _this // Global variable for 'this' reference to the class instance.
 
@@ -94,12 +95,14 @@ class Bot {
       // Instantiate the command handlers.
       this.help = new HelpCommand(dependencies)
       this.verify = new VerifyCommand(dependencies)
+      this.request = new RequestCommand(dependencies)
 
       // Bot event hooks.
       this.bot.on('message', this.processMsg)
       this.bot.onText(/\/help/, this.help.process)
       this.bot.onText(/\/start/, this.help.process)
       this.bot.onText(/\/verify/, this.verify.process)
+      this.bot.onText(/\/request/, this.request.process)
       // this.bot.onText(/\/merit/, this.getMerit)
       // this.bot.onText(/\/revoke/, this.revoke)
       // this.bot.onText(/\/list/, this.list)
