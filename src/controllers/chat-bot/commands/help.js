@@ -28,25 +28,23 @@ class HelpCommand {
       if (msgParts.length !== 1) return
 
       const outMsg = `
-  The bot manages the VIP room for the PSF. Only users who have verified they own PSF tokens with the required Merit are allowed to speak in the VIP room.
+  This bot manages the the PSF public Telegram channel. Only users who have verified they own a PSF Telegram token are allowed to speak in this room. This protects the channel against bots.
 
-  To verify your merit, follow these steps:
+  To obtain a PSF Telegram token, follow these steps:
 
-  1) Purchase PSF tokens at https://PSFoundation.cash or earn them by completing programming tasks (ask about bounties here: @permissionless_software). You can use wallet.fullstack.cash to manage your PSF tokens.
+  1) Create a wallet at wallet.fullstack.cash. Go the Wallet view and write down your 12-word menmonic to back up your wallet.
 
-  2) Get the WIF private key storing your PSF tokens. We recommend holding your PSF tokens on a paper wallet, which can be generated at https://paperwallet.psfoundation.info. A WIF private key starts with the letter 'K' or 'L'.
+  2) Get the 'bitcoincash:' address for your wallet from the Wallet view or BCH view.
 
-  3) Sign a message to verify that you own the address holding those PSF tokens. This can be done at https://sign.psfoundation.info. Sign the word 'verify'.
+  3) Request a PSF Telegram token using the /request command with this bot. Give it the BCH address for your wallet, and it will send you a token.
+    /request <your BCH address>
+
+  4) Get the WIF private key from the Wallet view of wallet.fullstack.cash. A WIF private key starts with the letter 'K' or 'L'.
+
+  3) Sign a message to verify that you own the address holding the PSF Telegram token. This can be done at https://sign.psfoundation.info. Sign the word 'verify'.
 
   4) Use the /verify command to verify your wallet address, like this:
     /verify <your BCH address> <The signed message>
-
-  Your 'Merit' is calculated this way:
-  Merit = token quantity X token age (in days)
-
-  If you obtain fewer tokens, it will take more time to aquire the required merit. If you obtain more, it takes less time.
-
-  If you need help, ask for guidence on @permissionless_software
 
   Available commands:
 
@@ -57,7 +55,7 @@ class HelpCommand {
       - Request a PSF Telegram token.
 
     /verify <BCH address> <signed message>
-      - Verify that you own the Bitcoin Cash address by signing a message. The bot will track the merit associated with this address.
+      - Verify that you own the Bitcoin Cash address by signing a message.
   `
 
       const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
