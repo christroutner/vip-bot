@@ -160,6 +160,8 @@ class Bot {
         err
       )
 
+      console.log('msg: ', msg)
+
       return false
     }
   }
