@@ -145,7 +145,7 @@ class Bot {
       // Delete the users message if they haven't verified.
       if (!tgUser.hasVerified) {
         // Wait a few seconds before deleting the message.
-        await _this.adapter.bch.bchjs.Util.sleep(3000)
+        await _this.adapters.bch.bchjs.Util.sleep(3000)
 
         await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
         return 2 // Used for testing.
