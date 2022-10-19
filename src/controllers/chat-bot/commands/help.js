@@ -41,9 +41,9 @@ class HelpCommand {
 
   4) Get the WIF private key from the Wallet view of wallet.fullstack.cash. A WIF private key starts with the letter 'K' or 'L'.
 
-  3) Sign a message to verify that you own the address holding the PSF Telegram token. This can be done at https://sign.psfoundation.info. Sign the word 'verify'.
+  5) Sign a message to verify that you own the address holding the PSF Telegram token. This can be done at https://sign.psfoundation.info. Sign the word 'verify'.
 
-  4) Use the /verify command to verify your wallet address, like this:
+  6) Use the /verify command to verify your wallet address, like this:
     /verify <your BCH address> <The signed message>
 
   Available commands:
