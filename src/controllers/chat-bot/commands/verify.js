@@ -87,13 +87,17 @@ class VerifyCommand {
           const tgUser = await _this.useCases.tgUser.getUser(msg.from.id)
           console.log(`tgUser: ${JSON.stringify(tgUser, null, 2)}`)
 
-          const bchAddr = _this.adapters.bch.bchjs.SLP.Address.toCashAddress(msgParts[1])
+          // const bchAddr = _this.adapters.bch.bchjs.SLP.Address.toCashAddress(msgParts[1])
+          let bchAddr = msgParts[1]
+          if (bchAddr.includes('ecash')) {
+            bchAddr = _this.adapters.bch.bchjs.Address.ecashtoCashAddress(bchAddr)
+          }
 
           // Return an error and exit if another user has already claimed that
           // address.
           const addressIsClaimed = await _this.checkDupClaim(bchAddr, msg)
           if (addressIsClaimed) {
-            returnMsg = `@${addressIsClaimed} has already claimed that address. They must first revoke it with the /revoke command.`
+            returnMsg = `@${addressIsClaimed} has already claimed that address.`
 
             const botMsg = await _this.bot.sendMessage(_this.chatId, returnMsg)
 
@@ -109,8 +113,9 @@ class VerifyCommand {
             tgUser.bchAddr
           )
           // tgUser.merit = await _this.adapters.bch.getMerit(tgUser.slpAddr)
-          tgUser.merit = await _this.adapters.bch.hasToken(tgUser.bchAddr)
-          console.log('tgUser.merit: ', tgUser.merit)
+          // tgUser.merit = await _this.adapters.bch.hasToken(tgUser.bchAddr)
+          tgUser.merit = 40000
+          // console.log('tgUser.merit: ', tgUser.merit)
 
           const now = new Date()
           tgUser.lastVerified = now.toISOString()

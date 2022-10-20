@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const config = require('../../config')
 
-const User = require('../../src/models/tg-user')
+const User = require('../../src/adapters/localdb/models/tg-user')
 
 async function getUsers () {
   // Connect to the Mongo Database.

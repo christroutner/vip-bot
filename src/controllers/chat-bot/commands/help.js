@@ -28,34 +28,24 @@ class HelpCommand {
       if (msgParts.length !== 1) return
 
       const outMsg = `
-  This bot manages the the PSF public Telegram channel. Only users who have verified they own a PSF Telegram token are allowed to speak in this room. This protects the channel against bots.
+  This bot manages the the PSF public Telegram channel. Only users who have verified a cryptocurrency address are allowed to speak in this room. This protects the channel against bots.
 
-  To obtain a PSF Telegram token, follow these steps:
+  To verify an address, follow these steps:
 
-  1) Create a wallet at wallet.fullstack.cash. Go the Wallet view and write down your 12-word menmonic to back up your wallet.
+  1) Create a BCH wallet at bchn-wallet.fullstack.cash, OR create an eCash wallet at ecash-wallet.fullstack.cash. Go the Wallet view and write down your 12-word menmonic to back up your wallet.
 
-  2) Get the 'bitcoincash:' address for your wallet from the Wallet view or BCH view.
+  2) Navigate to the 'Sign' page, and sign the word 'verify'. This will generate a cryptographic signature.
 
-  3) Request a PSF Telegram token using the /request command with this bot. Give it the BCH address for your wallet, and it will send you a token.
-    /request <your BCH address>
-
-  4) Get the WIF private key from the Wallet view of wallet.fullstack.cash. A WIF private key starts with the letter 'K' or 'L'.
-
-  5) Sign a message to verify that you own the address holding the PSF Telegram token. This can be done at https://sign.psfoundation.info. Sign the word 'verify'.
-
-  6) Use the /verify command to verify your wallet address, like this:
-    /verify <your BCH address> <The signed message>
+  3) Verify that you are not a bot with the following command:
+     /verify <your address> <The signed message>
 
   Available commands:
 
     /help or /start
       - Bring up this help message.
 
-    /request <BCH address>
-      - Request a PSF Telegram token.
-
-    /verify <BCH address> <signed message>
-      - Verify that you own the Bitcoin Cash address by signing a message.
+    /verify <address> <signed message>
+      - Verify that you own the cryptocurrency address by signing a message.
   `
 
       const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
