@@ -13,6 +13,7 @@ const TelegramBot = require('node-telegram-bot-api')
 const HelpCommand = require('./commands/help')
 const VerifyCommand = require('./commands/verify')
 const RequestCommand = require('./commands/request')
+const BotCommandUtil = require('./commands/util')
 
 let _this // Global variable for 'this' reference to the class instance.
 
@@ -67,6 +68,7 @@ class Bot {
     // this.bch = new BCH()
     this.TelegramBot = TelegramBot
     this.bot = {}
+    this.util = null // placeholder
 
     // Used for debugging.
     // setInterval(function () {
@@ -96,6 +98,7 @@ class Bot {
       this.help = new HelpCommand(dependencies)
       this.verify = new VerifyCommand(dependencies)
       this.request = new RequestCommand(dependencies)
+      this.util = new BotCommandUtil(dependencies)
 
       // Bot event hooks.
       this.bot.on('message', this.processMsg)
@@ -148,6 +151,12 @@ class Bot {
         await _this.adapters.bch.bchjs.Util.sleep(6000)
 
         await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
+
+        // Post a message about checking the pinned message
+        const outMsg = 'To speak in this room, you must verify your account. Check the pinned message for details.'
+        const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
+        _this.util.deleteBotSpam(msg, botMsg)
+
         return 2 // Used for testing.
       }
 
