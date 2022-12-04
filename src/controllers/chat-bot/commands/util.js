@@ -10,7 +10,7 @@ class BotCommandUtil {
     if (!this.bot) throw new Error('chat bot instance required when instantiating BotCommandUtil Class')
 
     // Constants
-    this.delayMs = 30000 // 30 seconds.
+    this.delayMs = 60000 // 30 seconds.
 
     _this = this
   }
