@@ -144,16 +144,16 @@ describe('#commands-util', () => {
       assert.equal(result, 0)
     })
 
-    it('should return default message if signature could not be verified', async () => {
-      // Mock calls to the bot.
-      sandbox.stub(uut.bot, 'sendMessage').resolves()
-      sandbox.stub(uut.util, 'deleteBotSpam').resolves()
-
-      const result = await uut.process(mockData.invalidVerifyMsg2)
-      // console.log('result: ', result)
-
-      assert.equal(result, 1)
-    })
+    // it('should return default message if signature could not be verified', async () => {
+    //   // Mock calls to the bot.
+    //   sandbox.stub(uut.bot, 'sendMessage').resolves()
+    //   sandbox.stub(uut.util, 'deleteBotSpam').resolves()
+    //
+    //   const result = await uut.process(mockData.invalidVerifyMsg2)
+    //   // console.log('result: ', result)
+    //
+    //   assert.equal(result, 1)
+    // })
 
     // it('should notify if address does not meet threshold', async () => {
     //   // Mock to force the code path for this test.
@@ -197,19 +197,19 @@ describe('#commands-util', () => {
       assert.equal(result, 0)
     })
 
-    it('should throw error if the address is already claimed', async () => {
-      // Mock to force the code path for this test.
-      sandbox.stub(uut.bot, 'sendMessage').resolves()
-      sandbox.stub(uut.util, 'deleteBotSpam').resolves()
-      sandbox.stub(uut.adapters.bch, 'verifyMsg').resolves(true)
-      sandbox.stub(uut.useCases.tgUser, 'getUser').resolves(mockData.mockUnverifiedUser)
-
-      // Report that address has already been claimed.
-      sandbox.stub(uut, 'checkDupClaim').resolves('testuser')
-
-      const result = await uut.process(mockData.validVerifyMsg)
-
-      assert.equal(result, 5)
-    })
+    // it('should throw error if the address is already claimed', async () => {
+    //   // Mock to force the code path for this test.
+    //   sandbox.stub(uut.bot, 'sendMessage').resolves()
+    //   sandbox.stub(uut.util, 'deleteBotSpam').resolves()
+    //   sandbox.stub(uut.adapters.bch, 'verifyMsg').resolves(true)
+    //   sandbox.stub(uut.useCases.tgUser, 'getUser').resolves(mockData.mockUnverifiedUser)
+    //
+    //   // Report that address has already been claimed.
+    //   sandbox.stub(uut, 'checkDupClaim').resolves('testuser')
+    //
+    //   const result = await uut.process(mockData.validVerifyMsg)
+    //
+    //   assert.equal(result, 5)
+    // })
   })
 })
