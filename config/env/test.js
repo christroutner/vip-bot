@@ -7,6 +7,6 @@
 module.exports = {
   session: 'secret-boilerplate-token',
   token: 'secret-jwt-token',
-  database: 'mongodb://localhost:27017/tg-bot-server-test',
+  database: 'mongodb://localhost:27017/tg-bot-vip-test',
   env: 'test'
 }

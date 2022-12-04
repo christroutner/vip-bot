@@ -79,8 +79,41 @@ class VerifyCommand {
         isValidSig = _this.adapters.bch.verifyMsg(verifyObj)
         console.log(`Signature is valid: ${isValidSig}`)
 
+        const wallet = _this.adapters.bch.wallet
+
+        // Retrieve a list of PSF Governance NFTs from the parent group token.
+        const psfGGTokenId = '5c8cb997cce61426b7149a74a3997443ec7eb738c5c246d9cfe70185a6911476'
+        const psfGG = await wallet.getTokenData(psfGGTokenId)
+        console.log('psfGG: ', psfGG)
+        const nftList = psfGG.genesisData.nfts
+        console.log('nftList: ', nftList)
+
+        // Get a list of tokens controlled by the users address.
+        const userTokens = await wallet.listTokens(msgParts[1])
+        console.log('userTokens: ', userTokens)
+
+        // Loop through the users tokens to determine if they hold one of the
+        // PSF governance NFTs.
+        let govNftFound = false
+        for (let i = 0; i < userTokens.length; i++) {
+          const thisUsersToken = userTokens[i]
+
+          // Loop through the list of governance NFTs.
+          for (let j = 0; j < nftList.length; j++) {
+            const thisGovNft = nftList[j]
+
+            // If there is a token match, exit the loops.
+            if (thisUsersToken.tokenId === thisGovNft) {
+              govNftFound = true
+              break
+            }
+          }
+
+          if (govNftFound) break
+        }
+
         // If the signature is valid, update the user model.
-        if (isValidSig) {
+        if (isValidSig && govNftFound) {
           // const tgUser = await _this.TGUser.findOne({
           //   tgId: msg.from.id
           // })
