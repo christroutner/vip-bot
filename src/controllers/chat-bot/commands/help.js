@@ -28,15 +28,17 @@ class HelpCommand {
       if (msgParts.length !== 1) return
 
       const outMsg = `
-  This bot manages the the PSF public Telegram channel. Only users who have verified a cryptocurrency address are allowed to speak in this room. This protects the channel against bots.
+  This bot manages the the PSF VIP Telegram channel. Only users who possess a Governance NFT are allowed to speak in this room. The PSF functions as a meritocracy, and only those who have proven they have 'skin in the game' by owning a Governance NFT are allowed to speak in this VIP room.
 
   To verify an address, follow these steps:
 
-  1) Create a BCH wallet at bchn-wallet.fullstack.cash, OR create an eCash wallet at ecash-wallet.fullstack.cash. Go the Wallet view and write down your 12-word menmonic to back up your wallet.
+  1) Create a BCH wallet at bchn-wallet.fullstack.cash. Go the Wallet view and write down your 12-word menmonic to back up your wallet. We recommend using a dedicated wallet for holding your governance NFT and for voting.
 
-  2) Navigate to the 'Sign' page, and sign the word 'verify'. This will generate a cryptographic signature.
+  2) Transfer the Governance NFT to the web wallet.
 
-  3) Verify that you are not a bot with the following command:
+  3) Navigate to the 'Sign' page, and sign the word 'verify'. This will generate a cryptographic signature.
+
+  3) Verify that you own the NFT with the following command:
      /verify <your address> <The signed message>
 
   Available commands:
@@ -46,6 +48,14 @@ class HelpCommand {
 
     /verify <address> <signed message>
       - Verify that you own the cryptocurrency address by signing a message.
+
+
+
+  (Video) Speaking in the VIP Telegram Channel:
+  https://youtu.be/2ETAFV7_CTk
+
+  (Video) How to Buy PSF Governance NFTs:
+  https://youtu.be/IICUT404IHs
   `
 
       const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
