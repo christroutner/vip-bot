@@ -63,5 +63,6 @@ coverage
 database/
 system-user-*.json
 vip-bot.sh
+psf-telegram.sh
 
 !README.md
