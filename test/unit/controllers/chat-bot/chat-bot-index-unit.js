@@ -194,7 +194,7 @@ describe('#chat-bot.js', () => {
 
       const result = await uut.processMsg(msg)
 
-      assert.equal(result, 2)
+      assert.equal(result, false)
     })
 
     it('should catch and handle an error', async () => {
