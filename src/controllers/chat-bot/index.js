@@ -139,10 +139,9 @@ class Bot {
         // Create a new telegram user model in the DB.
         try {
           await _this.useCases.tgUser.createUser(newUserData)
-        } catch(err) {
+        } catch (err) {
           console.log('Error trying to create new telegram user: ', err)
         }
-
 
         // Delete their message.
         await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
