@@ -149,7 +149,7 @@ class Bot {
         // Post a message about checking the pinned message.
         // 3/10/23 CT: This code is here, because the block below doesn't seem
         // to get executed for users without a telegram name.
-        const outMsg = 'To speak in this room, you must verify your account. Check the pinned message for details.'
+        const outMsg = 'To speak in this room, you must have a Telgram username and verify your account. Check the pinned message for details.'
         const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
         _this.util.deleteBotSpam(msg, botMsg)
 
