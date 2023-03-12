@@ -46,6 +46,9 @@ class HelpCommand {
 
     /verify <address> <signed message>
       - Verify that you own the cryptocurrency address by signing a message.
+
+  Here is a video showing how to execute the above instructions:
+  https://youtu.be/pCRCEBkXlyY
   `
 
       const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
