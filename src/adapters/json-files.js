@@ -1,7 +1,9 @@
 /*
   A utility file for reading and writing JSON files.
 */
+
 'use strict'
+
 const fs = require('fs')
 
 let _this
