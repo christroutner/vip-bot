@@ -98,7 +98,7 @@ class Bot {
 
       // Query the tgUser model from the data.
       const tgUser = await this.TGUser.findOne({ tgId: msg.from.id })
-      // console.log('tgUser:', tgUser)
+      console.log('tgUser:', tgUser)
 
       // Create a new model if it doesn't already exist.
       if (!tgUser) {
