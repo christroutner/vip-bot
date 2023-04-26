@@ -134,12 +134,24 @@ class Bot {
           username: msg.from.username,
           tgId: msg.from.id
         }
+        console.log('newUserData: ', newUserData)
 
         // Create a new telegram user model in the DB.
-        await _this.useCases.tgUser.createUser(newUserData)
+        try {
+          await _this.useCases.tgUser.createUser(newUserData)
+        } catch (err) {
+          console.log('Error trying to create new telegram user: ', err)
+        }
 
         // Delete their message.
         await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
+
+        // Post a message about checking the pinned message.
+        // 3/10/23 CT: This code is here, because the block below doesn't seem
+        // to get executed for users without a telegram name.
+        const outMsg = 'To speak in this room, you must have a Telgram username and verify your account. Check the pinned message for details.'
+        const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
+        _this.util.deleteBotSpam(msg, botMsg)
 
         // Exit function.
         return 1 // Used for testing.
