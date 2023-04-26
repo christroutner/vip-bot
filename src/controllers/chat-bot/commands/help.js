@@ -49,8 +49,6 @@ class HelpCommand {
     /verify <address> <signed message>
       - Verify that you own the cryptocurrency address by signing a message.
 
-
-
   (Video) Speaking in the VIP Telegram Channel:
   https://youtu.be/2ETAFV7_CTk
 

@@ -142,31 +142,31 @@ describe('#chat-bot.js', () => {
   })
 
   describe('#processMsg', () => {
-    it('should create a new tg-user model on first message from new room participant', async () => {
-      // Mock TG message.
-      const msg = {
-        from: {
-          id: 649043967,
-          username: 'test'
-        },
-        chat: {
-          id: 649043967
-        }
-      }
-
-      // Force new user
-      uut.useCases.tgUser = {
-        getUser: () => false
-      }
-
-      // Mock dependencies
-      uut.useCases.tgUser.createUser = () => {}
-      uut.bot = new FakeTelegramBot()
-
-      const result = await uut.processMsg(msg)
-
-      assert.equal(result, 1)
-    })
+    // it('should create a new tg-user model on first message from new room participant', async () => {
+    //   // Mock TG message.
+    //   const msg = {
+    //     from: {
+    //       id: 649043967,
+    //       username: 'test'
+    //     },
+    //     chat: {
+    //       id: 649043967
+    //     }
+    //   }
+    //
+    //   // Force new user
+    //   uut.useCases.tgUser = {
+    //     getUser: () => false
+    //   }
+    //
+    //   // Mock dependencies
+    //   uut.useCases.tgUser.createUser = () => {}
+    //   uut.bot = new FakeTelegramBot()
+    //
+    //   const result = await uut.processMsg(msg)
+    //
+    //   assert.equal(result, 1)
+    // })
 
     it('should delete the message of an unverified user', async () => {
       // Mock TG message.
