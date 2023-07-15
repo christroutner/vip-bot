@@ -141,7 +141,7 @@ class Bot {
           await _this.useCases.tgUser.createUser(newUserData)
         } catch (err) {
           console.log('Error trying to create new telegram user: ', err)
-          console.log('newUserData: ', newUserData)
+          console.log('msg: ', msg)
         }
 
         // Delete their message.
