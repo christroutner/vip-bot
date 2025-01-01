@@ -24,6 +24,22 @@ class Bch {
     this.config = config
   }
 
+  updateWallet(inObj = {}) {
+    const {apiToken} = inObj
+
+    // const apiToken = process.env.BCHJSTOKEN
+    console.log(`Refreshing wallet using this JWT token: ${apiToken}`)
+
+    this.wallet = new BchWallet(this.config.mnemonic, {
+      noUpdate: true,
+      interface: 'rest-api',
+      restURL: this.config.restURL,
+      apiToken
+    })
+    this.bchjs = this.wallet.bchjs
+    this.bchMerit = new BchMerit({ wallet: this.wallet })
+  }
+
   // Verify that the signed message 'verify' was signed by a specific BCH address.
   verifyMsg (verifyObj) {
     try {

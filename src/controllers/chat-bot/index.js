@@ -83,6 +83,7 @@ class Bot {
   startBot () {
     try {
       // Created instance of TelegramBot
+      console.log(`Bot Telegram token: ${this.token}`)
       this.bot = new this.TelegramBot(this.token, {
         polling: true
       })

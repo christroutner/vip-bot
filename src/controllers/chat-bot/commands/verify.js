@@ -160,7 +160,7 @@ class VerifyCommand {
 
             returnMsg = `@${
               msg.from.username
-            } you have been successfully verified! You may now speak in the PSF Telegram room.`
+            } you have been successfully verified! You may now speak in the Pro Devs room.`
             retVal = 2
           } else {
             // Merit does not meet the threshold.

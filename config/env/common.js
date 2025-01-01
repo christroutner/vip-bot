@@ -17,7 +17,7 @@ module.exports = {
 
   // Token ID of the Group token used to generate the NFTs used to gain speak
   // access to the VIP channel.
-  tokenId: process.env.TOKEN_ID ? process.env.TOKEN_ID : '5ca1f25b42b13271767eaf3b9fc2e9cf4a1983a364f4f994a4d9bf03edf91c65',
+  tokenId: process.env.TOKEN_ID ? process.env.TOKEN_ID : '22f8475fd82a4163a64cdb0d868534d016964b3acc8a6f0e6572f3c373d01866',
 
   mnemonic: process.env.MNEMONIC ? process.env.MNEMONIC : 'enrich angle area surge master athlete flee deliver pear force tape rent'
 }
