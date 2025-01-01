@@ -24,8 +24,8 @@ class Bch {
     this.config = config
   }
 
-  updateWallet(inObj = {}) {
-    const {apiToken} = inObj
+  updateWallet (inObj = {}) {
+    const { apiToken } = inObj
 
     // const apiToken = process.env.BCHJSTOKEN
     console.log(`Refreshing wallet using this JWT token: ${apiToken}`)

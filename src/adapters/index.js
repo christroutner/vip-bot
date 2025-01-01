@@ -40,8 +40,7 @@ class Adapters {
       const apiToken = await this.getJwt()
 
       // Update the wallet so that it uses the new JWT token.
-      await this.bch.updateWallet({apiToken})
-
+      await this.bch.updateWallet({ apiToken })
 
       console.log('Async Adapters have been started.')
     } catch (err) {
@@ -55,6 +54,9 @@ class Adapters {
   // https://github.com/Permissionless-Software-Foundation/jwt-bch-demo
   async getJwt () {
     try {
+      // TODO: Move this JWT token handling to its own library. Also add a timer-interval to
+      // renew the JWT token every 24 hours.
+
       // Log into the auth server.
       await this.jwtLib.register()
 
