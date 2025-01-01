@@ -1,0 +1,38 @@
+# Start the service with the command 'docker-compose up -d'
+
+version: '3.9'
+
+services:
+  mongo-koa-service:
+    image: mongo:4.2.0
+    container_name: mongo-koa-service
+    ports:
+      - '5555:27017' # <host port>:<container port>
+    volumes:
+      - ../data/database:/data/db
+    command: mongod --logpath=/dev/null # -- quiet
+    restart: always
+
+  koa-api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    #image: christroutner/bch-dex:v1.9.1
+    container_name: koa-api
+    environment:
+      KOA_ENV: 'production'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '10'
+    mem_limit: 1000mb
+    links:
+      - mongo-koa-service
+    ports:
+      - '5700:5700' # <host port>:<container port>
+    volumes:
+      #- ../scripts/wallet.json:/home/safeuser/bch-dex/wallet.json
+      #- ./bch-dex/start-production.sh:/home/safeuser/bch-dex/start-production.sh
+      - ./start-production.sh:/home/safeuser/koa/start-production.sh
+    restart: always
