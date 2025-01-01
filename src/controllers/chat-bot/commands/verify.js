@@ -82,7 +82,7 @@ class VerifyCommand {
         const wallet = _this.adapters.bch.wallet
 
         // Retrieve a list of PSF Governance NFTs from the parent group token.
-        const psfGGTokenId = '5c8cb997cce61426b7149a74a3997443ec7eb738c5c246d9cfe70185a6911476'
+        const psfGGTokenId = '22f8475fd82a4163a64cdb0d868534d016964b3acc8a6f0e6572f3c373d01866'
         const psfGG = await wallet.getTokenData(psfGGTokenId)
         console.log('psfGG: ', psfGG)
         const nftList = psfGG.genesisData.nfts

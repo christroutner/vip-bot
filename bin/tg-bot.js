@@ -51,6 +51,7 @@ class TGBot {
       await jwtLib.register()
 
       let apiToken = jwtLib.userData.apiToken
+      console.log('jwtLib.userData: ', jwtLib.userData)
 
       // Ensure the JWT token is valid to use.
       const isValid = await jwtLib.validateApiToken()
