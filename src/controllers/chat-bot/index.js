@@ -136,21 +136,35 @@ class Bot {
         }
         console.log('newUserData: ', newUserData)
 
+        let hasUsername = true // Assume true for default
+        let name = ''
+
         // Create a new telegram user model in the DB.
         try {
           await _this.useCases.tgUser.createUser(newUserData)
         } catch (err) {
           console.log('Error trying to create new telegram user: ', err)
           console.log('msg: ', msg)
+
+          // Attempt to retrieve the name, in order to identify the spammer.
+          try {
+            hasUsername = false
+            name = msg.from.first_name + ' ' + msg.from.last_name
+          } catch (err) {
+            console.log('Error trying to get name: ', err)
+          }
         }
 
         // Delete their message.
         await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
 
         // Post a message about checking the pinned message.
-        // 3/10/23 CT: This code is here, because the block below doesn't seem
-        // to get executed for users without a telegram name.
-        const outMsg = 'To speak in this room, you must have a Telgram username and verify your account. Check the pinned message for details.'
+        let outMsg = ''
+        if (!hasUsername) {
+          outMsg = `${name} has no Telegram username. To speak in this room, you must have a Telgram username and verify your account. Check the pinned message for details.`
+        } else {
+          outMsg = 'To speak in this room, you must verify your account. Check the pinned message for details.'
+        }
         const botMsg = await _this.bot.sendMessage(msg.chat.id, outMsg)
         _this.util.deleteBotSpam(msg, botMsg)
 
