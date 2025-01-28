@@ -156,6 +156,7 @@ class Bot {
         }
 
         // Delete their message.
+        await _this.adapters.bch.bchjs.Util.sleep(5000)
         await _this.bot.deleteMessage(msg.chat.id, msg.message_id)
 
         // Post a message about checking the pinned message.
